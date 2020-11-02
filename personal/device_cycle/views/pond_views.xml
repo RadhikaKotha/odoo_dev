@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Action -->
+        <record id="action_new_pond" model="ir.actions.act_window">
+            <field name="name">Ponds</field>
+            <field name="res_model">pond</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new pond</p>
+            </field>
+        </record>
+
+        <!-- Views -->
+        <record id="pond_form_view" model="ir.ui.view">
+            <field name="name">pond.form</field>
+            <field name="model">pond</field>
+            <field name="arch" type="xml">
+                <form string="Pond Form">
+                    <sheet>
+                        <group>
+                            <field name="partner_id" invisible="1"/>
+                            <field name="location_id"/>
+                            <field name="name"/>
+                            <field name="pondmother_count"/>
+                            <field name="shrimptack_count"/>
+                            <field name="pondguard_count"/>
+<!--                            <field name="pondlog_by_pond"/>-->
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="pond_tree_view" model="ir.ui.view">
+            <field name="name">pond.tree</field>
+            <field name="model">pond</field>
+            <field name="arch" type="xml">
+                <tree string="Pond Desc">
+                    <field name="partner_id"/>
+                    <field name="location_id" optional="show"/>
+                    <field name="name"/>
+                    <field name="pondmother_count"/>
+                    <field name="shrimptack_count"/>
+                    <field name="pondguard_count"/>
+                </tree>
+            </field>
+        </record>
+        <record id="pond_search_view" model="ir.ui.view">
+            <field name="name">pond.search</field>
+            <field name="model">pond</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="partner_id"/>
+                    <field name="location_id"/>
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <!-- Menu -->
+       <!-- <menuitem id="menu_pond" action="action_new_pond" parent="pondlog_menu"
+                  groups="group_pondlogs_manager" sequence="2"
+               />-->
+
+    </data>
+</odoo>

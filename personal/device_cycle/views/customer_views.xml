@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Action -->
+        <record id="action_new_customerdetails" model="ir.actions.act_window">
+            <field name="name">Customers..</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                   (0, 0, {'view_mode': 'tree', 'view_id': ref('Customer_tree_view')}),
+                  (0, 0, {'view_mode': 'form', 'view_id': ref('Customer_form_view')})]"/>
+            <field name="search_view_id" ref="Customer_search_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new issue/observation</p>
+            </field>
+        </record>
+
+        <!-- Views -->
+        <record id="Customer_form_view" model="ir.ui.view">
+            <field name="name">customer.new.form</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <form string="Customer Form">
+                    <sheet>
+                        <group>
+                            <field name="customer_id"/>
+                            <field name="name"/>
+                            <field name="phone"/>
+                            <field name="number_of_ponds"/>
+                            <field name="pondmother_count"/>
+                            <field name="shrimptack_count"/>
+                            <field name="pondguard_count"/>
+                           <!-- <field name="pond_ids"
+                            options="{'no_create_edit': True}"/>-->
+                        </group>
+                        <notebook>
+                            <page string="Ponds">
+                                <field name="pond_ids" mode="tree,form">
+                                    <tree options="{'no_create_edit': True, 'no_create':True}">
+                                        <field name="partner_id" domain="[('id','=',parent.id)]" invisible="1"/>
+                                        <field name="location_id"/>
+                                        <field name="name"/>
+                                        <field name="pondmother_count"/>
+                                        <field name="shrimptack_count"/>
+                                        <field name="pondguard_count"/>
+<!--                                        <field name="pondlog_count"/>-->
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="partner_id" readonly="1" />
+                                            <field name="location_id"/>
+                                            <field name="name"/>
+                                            <field name="pondmother_count"/>
+                                            <field name="shrimptack_count"/>
+                                            <field name="pondguard_count"/>
+<!--                                            <field name="pondlog_count" readonly="True"/>-->
+                                            <field name="pondlog_by_pond" widget="one2many"
+                                                   options="{'no_create_edit': True, 'no_create':True}"
+                                                   attrs="{
+                                                   'invisible': [('partner_id', '=', 1)]}">
+                                                <tree limit="10">
+                                                   <field name="pond_ids"
+                                                            widget="many2many_tags"/>
+                                                    <field name="issue_type"/>
+                                                    <field name="label_issue" />
+                                                    <field name="description"/>
+                                                    <field name="description_file" optional="hide"/>
+                                                    <field name="resolution_analysis" optional="hide"/>
+                                                    <field name="ticket_status"/>
+                                                    <field name="user_id"/>
+                                                    <field name="create_date" string="Created On" widget="date"/>
+                                                    <field name="create_uid" string="Created By"/>
+                                                    <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
+                                                    <field name="priority" decoration-primary="priority == 'low'"
+                                                           decoration-warning="priority == 'medium'"
+                                                           decoration-danger="priority == 'high'" widget="badge" optional="show"/>
+                                                </tree>
+                                            </field>
+                                        </group>
+                                    </form>
+
+                                </field>
+                            </page>
+                            <page string="Daily Observations">
+                                <field name="pondlog_ids"
+                                    options="{'no_create_edit': True}" readonly="1" limit="10"/>
+                            </page>
+                            <page string="Issue Analysis">
+<!--                                <field name="name">Issueanalysis.graph</field>-->
+<!--                                <field name="model">pondlog</field>-->
+<!--                                <field name="arch" type="xml">-->
+<!--                                    <graph string="Invoices" type="bar,pie" stacked="1" sample="1">-->
+<!--                                        <field name="issue"/>                                        -->
+<!--                                        <field name="amount" type="measure"/>-->
+<!--                                    </graph>-->
+<!--                                </field>-->
+<!--                                <field name="pondlog_ids">-->
+<!--                                       <graph string="Issue Analysis" orientation="horizontal" type="bar">-->
+<!--                                          <field name="issue" group="True"/>-->
+<!--                                          <field name="issue" operator="+"/>-->
+<!--                                       </graph>-->
+<!--                                </field>-->
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="Customer_tree_view" model="ir.ui.view">
+            <field name="name">customer.new.tree</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <tree string="Customer details" limit="10" default_order="id desc">
+                    <field name="customer_id"/>
+                    <field name="name"/>
+                    <field name="phone"/>
+                    <field name="number_of_ponds"/>
+                    <field name="pondmother_count"/>
+                    <field name="shrimptack_count"/>
+                    <field name="pondguard_count"/>
+                    <field name="pond_ids"
+                            widget="many2many_tags" options="{'no_create_edit': True}"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="Customer_search_view" model="ir.ui.view">
+            <field name="name">customer.new.search</field>
+            <field name="model">res.partner</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="customer_id"/>
+                </search>
+            </field>
+        </record>
+
+      <!-- Menu -->
+        <menuitem id="menu_customers" action="action_new_customerdetails" parent="pondlog_menu"
+                  groups="group_pondlogs_manager" sequence="1"
+               />
+    </data>
+</odoo>

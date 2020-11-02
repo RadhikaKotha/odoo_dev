@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Action -->
+        <record id="action_new_pondlog" model="ir.actions.act_window">
+            <field name="name">Daily Observations</field>
+            <field name="res_model">pondlog</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new issue/observation</p>
+            </field>
+        </record>
+
+        <!-- Views -->
+        <record id="pondlogs_form_view" model="ir.ui.view">
+            <field name="name">pondlog.form</field>
+            <field name="model">pondlog</field>
+            <field name="arch" type="xml">
+                <form string="Pondlog Form">
+                    <sheet>
+                        <group>
+                            <field name="locations" invisible="1"/>
+                            <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                            <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                    domain="[('id','in',locations)]"/>
+                            <field name="pond_ids" domain="[('location_id','=',location_id)]"
+                                         widget="many2many_tags" options="{'no_create_edit': True, 'no_create':True}"/>
+                            <field name="issue_type"/>
+                            <field name="label_issue" />
+                            <field name="priority"/>
+                            <field name="description"/>
+                            <field name="description_file" filename="description_filename"/>
+                            <field name="description_filename" invisible="1"/>
+                            <field name="mul_image" string="Description images">
+                                <form>
+                                    <field name="mul_image" widget="image"/>
+                                    <field name="image_id" invisible="1"/>
+                                </form>
+                                <tree>
+                                    <field name="mul_image" widget="image"/>
+                                    <field name="image_id" invisible="1"/>
+                                </tree>
+                            </field>
+                            <field name="create_uid" string="Created By" invisible="1"/>
+                            <field name="resolution_analysis" attrs="{'invisible': [('create_uid','=',False)]}"/>
+                            <field name="ticket_status" attrs="{'readonly': [('create_uid','=',False)]}"/>
+                            <field name="user_id"/>
+                            <field name="pondlog_history" options="{'no_create_edit': True,
+                                                            'no_create':True, 'no_quick_create':True}"
+                                                        attrs="{'invisible': [('create_uid','=',False)]}">
+                                <tree string="Pondlog Tree view" limit="10">
+<!--                                    <field name="partner_id"/>-->
+<!--                                    <field name="location_id"/>-->
+<!--                                    <field name="pond_ids"-->
+<!--                                          widget="many2many_tags" options="{'no_create_edit': True, 'no_create':True}"/>-->
+                                    <field name="issue_type"/>
+                                    <field name="label_issue" />
+                                    <field name="description"/>
+                                    <field name="description_file" optional="hide"/>
+                                    <field name="resolution_analysis" optional="hide"/>
+                                    <field name="ticket_status"/>
+                                    <field name="user_id"/>
+                                    <field name="create_date" string="Created On" widget="date"/>
+                                    <field name="create_uid" string="Created By"/>
+                                    <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
+                                    <field name="priority" decoration-primary="priority == 'low'" decoration-warning="priority == 'medium'" decoration-danger="priority == 'high'" widget="badge" optional="show"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="locations" invisible="1"/>
+                                        <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                        <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                domain="[('id','in',locations)]"/>
+                                        <field name="pond_ids" domain="[('location_id','=',location_id)]"
+                                                     widget="many2many_tags" options="{'no_create_edit': True, 'no_create':True}"/>
+                                        <field name="issue_type"/>
+                                        <field name="label_issue" />
+                                        <field name="priority"/>
+                                        <field name="description"/>
+                                        <field name="description_file" filename="description_filename"/>
+                                        <field name="description_filename" invisible="1"/>
+                                        <field name="mul_image" string="Description images">
+                                            <form>
+                                                <field name="mul_image" widget="image" />
+                                                <field name="image_id" invisible="1"/>
+                                            </form>
+                                            <tree>
+                                                <field name="mul_image" widget="image"/>
+                                                <field name="image_id" invisible="1"/>
+                                            </tree>
+                                        </field>
+                                        <field name="create_uid" string="Created By" invisible="1"/>
+                                        <field name="resolution_analysis" attrs="{'invisible': [('create_uid','=',False)]}"/>
+                                        <field name="ticket_status" attrs="{'readonly': [('create_uid','=',False)]}"/>
+                                        <field name="user_id"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="pondlogs_tree_view" model="ir.ui.view">
+            <field name="name">pondlog.tree</field>
+            <field name="model">pondlog</field>
+            <field name="arch" type="xml">
+                <tree string="Pondlog Tree view" limit="10">
+                    <field name="partner_id"/>
+                    <field name="location_id"/>
+                   <field name="pond_ids"
+                          widget="many2many_tags"/>
+                    <field name="issue_type"/>
+                    <field name="label_issue" />
+                    <field name="description"/>
+                    <field name="description_file" optional="hide"/>
+                    <field name="resolution_analysis" optional="hide"/>
+                    <field name="ticket_status"/>
+                    <field name="user_id"/>
+                    <field name="create_date" string="Created On" widget="date"/>
+                    <field name="create_uid" string="Created By"/>
+                    <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
+                    <field name="priority" decoration-primary="priority == 'low'"
+                           decoration-warning="priority == 'medium'"
+                           decoration-danger="priority == 'high'" widget="badge" optional="show"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="pondlog_search_view" model="ir.ui.view">
+            <field name="name">pondlog.search</field>
+            <field name="model">pondlog</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="location_id"/>
+                    <field name="pond_ids"/>
+                    <field name="user_id"/>
+                </search>
+            </field>
+        </record>
+        <!-- Menu -->
+        <menuitem id="menu_pondlog" action="action_new_pondlog" parent="pondlog_menu"
+                  groups="group_pondlogs_manager" sequence="2"/>
+
+    </data>
+</odoo>

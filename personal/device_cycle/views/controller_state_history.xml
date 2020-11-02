@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Action -->
+        <record id="action_controller_state_history" model="ir.actions.act_window">
+            <field name="name">Controller State History</field>
+            <field name="res_model">controller.state.history</field>
+            <field name="view_mode">tree,calendar,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Device State History</p>
+            </field>
+        </record>
+
+        <!-- Views -->
+        <record id="controller_state_history_calendar_view" model="ir.ui.view">
+   <field name="name">controller.state.history.calendar</field>
+   <field name="model">controller.state.history</field>
+   <field name="arch" type="xml">
+       <calendar string="Controller state history"
+                 date_start="from_date"
+                 date_stop="to_date"
+                 event_open_popup="true"
+                 mode="month"
+                 color="state"
+                 quick_add="False">
+           <field name="controller_id"/>
+           <field name="state"/>
+       </calendar>
+   </field>
+</record>
+
+        <record id="controller_state_history_form_view" model="ir.ui.view">
+            <field name="name">controller.state.history.form</field>
+            <field name="model">controller.state.history</field>
+            <field name="arch" type="xml">
+                <form string="Controller Form">
+                    <sheet>
+                        <group>
+                    <field name="controller_id" attrs="{'readonly': [('id', '>', 0)]}"/>
+                    <field name="state"/>
+                    <field name="from_date"/>
+                         <field name="to_date"/>
+
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="controller_state_history_search_view" model="ir.ui.view">
+            <field name="name">controller.state.history.search</field>
+            <field name="model">controller.state.history</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="controller_id"/>
+                    <field name="state"/>
+                    <field name="from_date"/>
+                         <field name="to_date"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="controller_state_history_tree_view" model="ir.ui.view">
+            <field name="name">controller.state.history.tree</field>
+            <field name="model">controller.state.history</field>
+            <field name="arch" type="xml">
+                <tree string="Controller History">
+                    <field name="controller_id"/>
+                    <field name="state"/>
+                      <field name="from_date"/>
+                         <field name="to_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_controller_state_history" action="action_controller_state_history" parent="history"
+               sequence="4"/>
+
+
+    </data>
+</odoo>

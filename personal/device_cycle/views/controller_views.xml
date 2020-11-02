@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Action -->
+        <record id="action_controller" model="ir.actions.act_window">
+            <field name="name">Controllers</field>
+            <field name="res_model">controller</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create the controllers</p>
+            </field>
+        </record>
+
+        <!-- Views -->
+        <record id="controller_form_view" model="ir.ui.view">
+            <field name="name">controller.form</field>
+            <field name="model">controller</field>
+            <field name="arch" type="xml">
+                <form string="Controller Form">
+
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="type"/>
+                            <field name="state"/>
+                            <field name="expected_availabilty" attrs="{'invisible':[('state', '=', 'available')]}"/>
+                        <field name="state_history">
+                                <tree create="true" >
+                                    <field name="state"/>
+                                    <field name="from_date"/>
+                                    <field name="to_date"/>
+                                </tree>
+                        </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="controller_search_view" model="ir.ui.view">
+            <field name="name">controller.search</field>
+            <field name="model">controller</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="type"/><field name="state"/>
+
+                </search>
+            </field>
+        </record>
+
+        <record id="controller_tree_view" model="ir.ui.view">
+            <field name="name">controller.tree</field>
+            <field name="model">controller</field>
+            <field name="arch" type="xml">
+                <tree string="Controller Tree">
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_controller" action="action_controller" parent="device_mobilization"
+               sequence="4"/>
+    </data>
+</odoo>
