@@ -1,22 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Action -->
-        <record id="action_new_customerdetails" model="ir.actions.act_window">
-            <field name="name">Customers..</field>
-            <field name="res_model">res.partner</field>
-            <field name="view_mode">tree,form</field>
-
-            <field name="view_ids"
-                    eval="[(5, 0, 0),
-                   (0, 0, {'view_mode': 'tree', 'view_id': ref('Customer_tree_view')}),
-                  (0, 0, {'view_mode': 'form', 'view_id': ref('Customer_form_view')})]"/>
-            <field name="search_view_id" ref="Customer_search_view"/>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">create a new issue/observation</p>
-            </field>
-        </record>
-
         <!-- Views -->
         <record id="Customer_form_view" model="ir.ui.view">
             <field name="name">customer.new.form</field>
@@ -135,6 +119,22 @@
                     <field name="name"/>
                     <field name="customer_id"/>
                 </search>
+            </field>
+        </record>
+
+         <!-- Action -->
+        <record id="action_new_customerdetails" model="ir.actions.act_window">
+            <field name="name">Customers..</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">tree,form</field>
+
+            <field name="view_ids"
+                    eval="[(5, 0, 0),
+                   (0, 0, {'view_mode': 'tree', 'view_id': ref('Customer_tree_view')}),
+                  (0, 0, {'view_mode': 'form', 'view_id': ref('Customer_form_view')})]"/>
+            <field name="search_view_id" ref="Customer_search_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new issue/observation</p>
             </field>
         </record>
 

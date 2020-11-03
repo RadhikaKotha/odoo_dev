@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Action -->
-        <record id="action_controller" model="ir.actions.act_window">
-            <field name="name">Controllers</field>
-            <field name="res_model">controller</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">Create the controllers</p>
-            </field>
-        </record>
 
         <!-- Views -->
         <record id="controller_form_view" model="ir.ui.view">
@@ -58,6 +49,16 @@
                     <field name="type"/>
                     <field name="state"/>
                 </tree>
+            </field>
+        </record>
+
+         <!-- Action -->
+        <record id="action_controller" model="ir.actions.act_window">
+            <field name="name">Controllers</field>
+            <field name="res_model">controller</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create the controllers</p>
             </field>
         </record>
 

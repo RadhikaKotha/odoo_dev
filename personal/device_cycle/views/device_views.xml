@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Action -->
-        <record id="action_device" model="ir.actions.act_window">
-            <field name="name">Devices</field>
-            <field name="res_model">device</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">Create the devices</p>
-            </field>
-        </record>
-
         <!-- Views -->
         <record id="device_form_view" model="ir.ui.view">
             <field name="name">device.form</field>
@@ -78,6 +68,16 @@
                     <field name="user_id"/>
                     <field name="history"/>
                 </tree>
+            </field>
+        </record>
+
+         <!-- Action -->
+        <record id="action_device" model="ir.actions.act_window">
+            <field name="name">Devices</field>
+            <field name="res_model">device</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Create the devices</p>
             </field>
         </record>
 

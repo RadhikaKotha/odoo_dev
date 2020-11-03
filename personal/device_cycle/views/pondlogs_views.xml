@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Action -->
-        <record id="action_new_pondlog" model="ir.actions.act_window">
-            <field name="name">Daily Observations</field>
-            <field name="res_model">pondlog</field>
-            <field name="view_mode">tree,form</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">create a new issue/observation</p>
-            </field>
-        </record>
-
         <!-- Views -->
         <record id="pondlogs_form_view" model="ir.ui.view">
             <field name="name">pondlog.form</field>
@@ -139,6 +129,17 @@
                 </search>
             </field>
         </record>
+
+         <!-- Action -->
+        <record id="action_new_pondlog" model="ir.actions.act_window">
+            <field name="name">Daily Observations</field>
+            <field name="res_model">pondlog</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new issue/observation</p>
+            </field>
+        </record>
+
         <!-- Menu -->
         <menuitem id="menu_pondlog" action="action_new_pondlog" parent="pondlog_menu"
                   groups="group_pondlogs_manager" sequence="2"/>

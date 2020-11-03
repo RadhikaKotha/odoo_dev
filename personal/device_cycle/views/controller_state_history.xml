@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!-- Action -->
-        <record id="action_controller_state_history" model="ir.actions.act_window">
-            <field name="name">Controller State History</field>
-            <field name="res_model">controller.state.history</field>
-            <field name="view_mode">tree,calendar,form</field>
-            <field name="help" type="html">
-                <p class="o_view_nocontent_smiling_face">Device State History</p>
-            </field>
-        </record>
 
         <!-- Views -->
         <record id="controller_state_history_calendar_view" model="ir.ui.view">
@@ -70,6 +61,16 @@
                       <field name="from_date"/>
                          <field name="to_date"/>
                 </tree>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="action_controller_state_history" model="ir.actions.act_window">
+            <field name="name">Controller State History</field>
+            <field name="res_model">controller.state.history</field>
+            <field name="view_mode">tree,calendar,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">Device State History</p>
             </field>
         </record>
 
