@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_location,access_location_obj,model_location,base.group_system,1,1,1,1
+access_label,access_label_obj,model_label,base.group_system,1,1,1,1
+access_issuetype,access_issuetype_obj,model_issue_type,base.group_system,1,1,1,1
+access_pond,access_pond_obj,model_pond,base.group_system,1,1,1,1
+access_log,access_log_obj,model_pondlog,base.group_system,1,1,1,1
+access_log_history,access_log_history_obj,model_pondlog_history,base.group_system,1,1,1,1
+access_mul_image,access_mul_image_obj,model_multiple_image,base.group_system,1,1,1,1
+
+
+

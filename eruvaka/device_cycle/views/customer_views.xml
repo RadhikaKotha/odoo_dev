@@ -10,6 +10,7 @@
                     <sheet>
                         <group>
                             <field name="customer_id"/>
+                            <field name="country_id"/>
                             <field name="name"/>
                             <field name="phone"/>
                             <field name="number_of_ponds"/>
@@ -33,7 +34,7 @@
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="partner_id" readonly="1" />
+                                            <field name="partner_id" readonly="1" domain="[('id','=',parent.id)]"/>
                                             <field name="location_id"/>
                                             <field name="name"/>
                                             <field name="pondmother_count"/>
@@ -69,7 +70,7 @@
                             </page>
                             <page string="Daily Observations">
                                 <field name="pondlog_ids"
-                                    options="{'no_create_edit': True}" readonly="1" limit="10"/>
+                                       options="{'no_create_edit': True}" readonly="1" limit="10"/>
                             </page>
                             <page string="Issue Analysis">
 <!--                                <field name="name">Issueanalysis.graph</field>-->
@@ -99,6 +100,7 @@
             <field name="arch" type="xml">
                 <tree string="Customer details" limit="10" default_order="id desc">
                     <field name="customer_id"/>
+                    <field name="country_id" optional="hide"/>
                     <field name="name"/>
                     <field name="phone"/>
                     <field name="number_of_ponds"/>

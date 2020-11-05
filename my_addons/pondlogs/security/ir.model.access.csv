@@ -1,6 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_device_image,access_device_image_obj,model_device_image,base.group_system,1,1,1,1
-access_location,access_location_obj,model_location,base.group_system,1,1,1,1
-access_pond,access_pond_obj,model_pond,base.group_system,1,1,1,1
-access_log,access_log_obj,model_log,base.group_system,1,1,1,1
-

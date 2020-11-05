@@ -1,24 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.osv import expression
-from odoo.tools.float_utils import float_round as round
 from odoo.exceptions import ValidationError, UserError
-from odoo.addons.http_routing.models.ir_http import slug
-from odoo.addons.website.models import ir_http
-from odoo.tools.translate import html_translate
-from odoo.tools.mimetypes import guess_mimetype
-
-import math
-import logging
-import mimetypes
-
-class Car(models.Model):
-    _name = "car.desc"
-    _description = "sample test code"
-    _inherit = ['device']
-
-    name = fields.Char('Name')
-    description = fields.Char('Description')
-    leads = fields.Many2many('crm.lead', string='leads')
 
 class Location(models.Model):
     _name = "location"
