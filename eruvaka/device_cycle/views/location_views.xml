@@ -15,7 +15,6 @@
                 </form>
             </field>
         </record>
-
         <record id="location_tree_view" model="ir.ui.view">
             <field name="name">location.tree</field>
             <field name="model">location</field>
@@ -49,18 +48,18 @@
 
         <!-- top level menu: no parent -->
         <menuitem id="main_pondlog_menu" name="ST Response Tracking"
-                  groups="group_pondlogs_manager"/>
+                  groups="group_pondlogs_user"/>
         <!--A first level in the left side menu is needed
             before using action= attribute -->
         <menuitem id="pondlog_menu" name="ST Response Tracking"
-                  groups="group_pondlogs_manager"
+                  groups="group_pondlogs_user"
                   parent="main_pondlog_menu"/>
         <!--The following menu item should appear "after"
             its parent openacademy menu and "afetr" its
             action course list action-->
-       <!-- <menuitem id="courses_menu" name="Locations" parent="pondlog_menu"
-                  groups="group_pondlogs_manager"
-                  action="action_new_location" sequence="1"/>-->
+<!--       <menuitem id="courses_menu" name="Locations" parent="pondlog_menu"-->
+<!--                  groups="group_pondlogs_manager"-->
+<!--                  action="action_new_location" sequence="4"/>-->
 
     </data>
 </odoo>

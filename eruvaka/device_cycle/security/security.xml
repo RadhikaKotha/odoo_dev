@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
-    <record id="group_pondlogs_manager" model="res.groups">
+    <record model="res.groups" id="group_pondlogs_manager" >
         <field name="name">PondLogs / Manager</field>
+        <field name="implied_ids" eval="[(4, ref('group_pondlogs_user'))]"/>
     </record>
+     <record model="res.groups" id="group_pondlogs_user" >
+        <field name="name">PondLogs / User</field>
+    </record>
+    <record model="ir.rule" id="dailyobservations_user_record_rule">
+        <field name="name">DailyObservations Users</field>
+        <field name="model_id" ref="model_pondlog"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_pondlogs_user'))]"/>
+        <field name="perm_unlink" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+    </record>
+    <record model="ir.rule" id="dailyobservations_manager_record_rule">
+        <field name="name">DailyObservations Manager</field>
+        <field name="model_id" ref="model_pondlog"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_pondlogs_manager'))]"/>
+        <field name="perm_unlink" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+    </record>
+
 </odoo>

@@ -227,7 +227,7 @@ class Pondlog(models.Model):
                          '" in the ponds ' + pndnames + ' at location "' + location.name +
                          '". The issue is ' + '"' + description + '" and needs your attention.<br/><br/>'
                          'Please click here to go to the page: '
-                         u'<a href="http://localhost:8069/web#id=' + model_id +
+                         u'<a href="http://52.66.211.244/:8069/web#id=' + model_id +
                          '&action=355&model=pondlog&view_type=form&cids=&menu_id=262">'
                          'ST Response Tracking</a><br/><br/>'
                          'Have a nice day!<br/><b>Eruvaka Team</b>',

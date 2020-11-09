@@ -10,7 +10,8 @@
                     <sheet>
                         <group>
                             <field name="locations" invisible="1"/>
-                            <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                            <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                        domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"/>
                             <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
                                     domain="[('id','in',locations)]"/>
                             <field name="pond_ids" domain="[('location_id','=',location_id)]"
@@ -142,7 +143,7 @@
 
         <!-- Menu -->
         <menuitem id="menu_pondlog" action="action_new_pondlog" parent="pondlog_menu"
-                  groups="group_pondlogs_manager" sequence="2"/>
+                  groups="group_pondlogs_user" sequence="2"/>
 
     </data>
 </odoo>

@@ -60,9 +60,9 @@
         </record>
 
         <!-- Menu -->
-       <!-- <menuitem id="menu_pond" action="action_new_pond" parent="pondlog_menu"
-                  groups="group_pondlogs_manager" sequence="2"
-               />-->
+<!--       <menuitem id="menu_pond" action="action_new_pond" parent="pondlog_menu"-->
+<!--                  groups="group_pondlogs_manager" sequence="3"-->
+<!--               />-->
 
     </data>
 </odoo>
