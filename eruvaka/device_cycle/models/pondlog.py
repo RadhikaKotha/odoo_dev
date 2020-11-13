@@ -16,6 +16,7 @@ class Location(models.Model):
                       _('Location already exists'))
         location_object = super(Location, self).create(vals)
         return location_object
+
     def write(self, vals):
         locations = self.sudo().env['location'].search([])
         for location in locations:
@@ -24,6 +25,29 @@ class Location(models.Model):
                       _('Location already exists'))
         location_object = super(Location, self).write(vals)
         return location_object
+
+
+class Device(models.Model):
+    _name = "device"
+    _description = "device details"
+    _rec_name = "device_id"
+
+    device_id = fields.Char('Device ID')
+    device_type = fields.Selection([('shrimp talk', 'Shrimp Talk'),
+        ('pond mother', 'Pond Mother'), ('pond guard', 'Pond Guard'), ],
+        copy=False, index=True, track_visibility='onchange', track_sequence=3, string='Device Type')
+
+    pond_id = fields.Many2one('pond', string="Pond ID")
+
+    @api.model
+    def create(self, vals):
+        device_object = super(Device, self).create(vals)
+        return device_object
+
+    def write(self, vals):
+        device_object = super(Device, self).write(vals)
+        return device_object
+
 
 class Pond(models.Model):
     _name = "pond"
@@ -35,9 +59,48 @@ class Pond(models.Model):
     pondmother_count = fields.Integer('PondMother Count')
     shrimptack_count = fields.Integer('ShrimpTalk Count')
     pondguard_count = fields.Integer('PondGuard Count')
-    # pondlog_count = fields.Integer('Number of issues', compute="_getPondlogByPond")
+    device_pondmother = fields.Many2many('device', 'device_pondmother_rel', 'pond_id', 'device_id',
+                                         string="PondMother IDs")
+    device_shrimp = fields.Many2many('device', 'device_shrimp_rel', 'pond_id', 'device_id', string="ShrimpTalk IDs")
+    device_pondguard = fields.Many2many('device', 'device_pondguard_rel', 'pond_id', 'device_id',
+                                        string="PondGuard IDs")
+
+    device_ids = fields.One2many('device', 'pond_id', 'Device IDs')
 
     pondlog_by_pond = fields.One2many('pondlog', compute='_getPondlogByPond', string='Pond logs')
+
+    @api.constrains('device_pondguard', 'device_shrimp', 'device_pondmother')
+    def updatedeviceids(self):
+        devices = []
+        pg = self.mapped('device_pondguard')
+        pm = self.mapped('device_pondmother')
+        ps = self.mapped('device_shrimp')
+        # getting all the devices attached to the pond and appending to the empty list
+        for pndg in pg:
+            devices.append(pndg.id)
+        for pndm in pm:
+            devices.append(pndm.id)
+        for pnds in ps:
+            devices.append(pnds.id)
+        # updating all the devices rows with pond_id
+        self.write({
+            'device_ids': [(6, 0, devices)]
+        })
+
+    @api.model
+    def create(self, vals):
+        # devices = self.sudo().env['device'].search([])
+        # for device in devices:
+        #     if device.device_id == vals['device_id']:
+        #         pndname = device.pond_id
+        #         raise UserError(
+        #             _('Device already attached to this pond ' + pndname))
+        pond_object = super(Pond, self).create(vals)
+        return pond_object
+
+    def write(self, vals):
+        pond_object = super(Pond, self).write(vals)
+        return pond_object
 
     @api.onchange("id")
     def _getPondlogByPond(self):
@@ -54,13 +117,9 @@ class Pond(models.Model):
                     for log in logs:
                         pondlogs_bypond.append(log.id)
                     self.pondlog_by_pond = pondlogs_bypond
-                    # a = len(pondlogs_bypond)
-                    # self.pondlog_count = a
-                    # print('testtttttttttttttttttttttttttttttttttttttttt')
-                    # print(a)
     @api.model
     def _getCustomerId(self):
-        x = self.env['res.partner'].search(['id', '=', active_ids])
+        x = self.env['res.partner'].search(['id', '=', self.active_ids])
         self.partner_id = x.id
 
 class MultipleImages(models.Model):
@@ -90,11 +149,7 @@ class Pondlog(models.Model):
 
     location_id = fields.Many2one('location', required=True)
     pond_ids = fields.Many2many('pond', string="Ponds", required=True)
-    # issue = fields.Selection([('device', 'Device'),
-    #                         ('feed', 'Feed'), ('water', 'Water'), ('pollution', 'Pollution'), ],
-    #                          string="Issue Type", copy=False,
-    #                         index=True, track_visibility='onchange',
-    #                         track_sequence=4, default='device')
+    device_ids = fields.Many2many('device', string="Device IDs")
     issue_type = fields.Many2one('issue.type', string="Issue Type", required='True')
     label_issue = fields.Many2one('label', string="Label")
     description = fields.Text('Description', required='True')
@@ -107,13 +162,12 @@ class Pondlog(models.Model):
         ('closed', 'Closed'),],copy=False, index=True, track_visibility='onchange',
         track_sequence=2, default='open')
     priority = fields.Selection([('high', 'High'),
-                                 ('medium', 'Medium'), ('low', 'Low'),], copy=False, index=True,
+                                 ('medium', 'Medium'), ('low', 'Low'), ], copy=False, index=True,
                                  track_visibility='onchange', track_sequence=3)
     locations = fields.One2many('location', string='Locations', compute='_getlocationsbycustid')
     pondlog_history = fields.One2many('pondlog.history', 'pondlog_id', string="Reassignment History", readonly="True")
     mul_image = fields.One2many('multiple.image', 'image_id', auto_join=True)
     pondnames = fields.Text(compute='_getpondanmes')
-
 
     @api.onchange("partner_id")
     def _clearLocationData(self):
@@ -161,6 +215,7 @@ class Pondlog(models.Model):
         pondlog_prev = {
             'location_id': self.location_id.id,
             'pond_ids': self.pond_ids,
+            'device_ids': self.device_ids,
             'issue_type': self.issue_type.id,
             'label_issue': self.label_issue.id,
             'description': self.description,
@@ -174,7 +229,8 @@ class Pondlog(models.Model):
             'pondlog_id': self.id,
             'mul_image': self.mul_image,
         }
-        #Creating old record into pondlog history table
+
+        # Creating old record into pondlog history table
         self.sudo().env['pondlog.history'].create(pondlog_prev)
 
         if 'user_id' not in vals:
@@ -227,7 +283,7 @@ class Pondlog(models.Model):
                          '" in the ponds ' + pndnames + ' at location "' + location.name +
                          '". The issue is ' + '"' + description + '" and needs your attention.<br/><br/>'
                          'Please click here to go to the page: '
-                         u'<a href="http://52.66.211.244/:8069/web#id=' + model_id +
+                         u'<a href="http://52.66.211.244:8069/web#id=' + model_id +
                          '&action=355&model=pondlog&view_type=form&cids=&menu_id=262">'
                          'ST Response Tracking</a><br/><br/>'
                          'Have a nice day!<br/><b>Eruvaka Team</b>',
@@ -240,11 +296,7 @@ class PondlogHistory(models.Model):
 
     location_id = fields.Many2one('location', required=True)
     pond_ids = fields.Many2many('pond', string="Ponds")
-    # issue = fields.Selection([('device', 'Device'),
-    #                           ('feed', 'Feed'), ('water', 'Water'), ('pollution', 'Pollution'), ],
-    #                          string="Issue Type", copy=False,
-    #                          index=True, track_visibility='onchange',
-    #                          track_sequence=4, default='device')
+    device_ids = fields.Many2many('device', string="Device IDs")
     issue_type = fields.Many2one('issue.type', string="Issue Type")
     label_issue = fields.Many2one('label', string="Label")
     description = fields.Text('Description')
@@ -295,7 +347,7 @@ class Customer(models.Model):
     pondlog_ids = fields.One2many('pondlog', 'partner_id', string="Daily logs", copy=True,
                                auto_join=True)
     pond_ids = fields.One2many('pond', 'partner_id', string="Ponds", copy=True,
-                                 auto_join = True)
+                                 auto_join=True)
 
     def _getPonds(self):
         for customer in self:
@@ -307,14 +359,11 @@ class Customer(models.Model):
     @api.onchange("pond_ids")
     def _getdevicescount(self):
         for custmr in self:
-            pondmotercount = 0
-            shrimptalkcount = 0
-            pondguardcount = 0
-            for pnd in custmr.pond_ids:
-                pondmotercount += pnd.pondmother_count
-                shrimptalkcount += pnd.shrimptack_count
-                pondguardcount += pnd.pondguard_count
-            custmr.pondmother_count = pondmotercount
+            pondguardcount = len(custmr.pond_ids.mapped('device_pondguard'))
+            shrimptalkcount = len(custmr.pond_ids.mapped('device_shrimp'))
+            pondmothercount = len(custmr.pond_ids.mapped('device_pondmother'))
+
+            custmr.pondmother_count = pondmothercount
             custmr.shrimptack_count = shrimptalkcount
             custmr.pondguard_count = pondguardcount
 

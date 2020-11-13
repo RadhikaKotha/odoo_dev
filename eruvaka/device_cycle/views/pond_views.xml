@@ -12,10 +12,15 @@
                             <field name="partner_id" invisible="1"/>
                             <field name="location_id"/>
                             <field name="name"/>
-                            <field name="pondmother_count"/>
-                            <field name="shrimptack_count"/>
-                            <field name="pondguard_count"/>
-<!--                            <field name="pondlog_by_pond"/>-->
+                            <field name="device_shrimp" widget="many2many_tags"
+                                   context="{'default_device_type': 'shrimp talk'}"
+                                   domain="[('device_type','=','shrimp talk')]"/>
+                            <field name="device_pondmother" widget="many2many_tags"
+                                   context="{'default_device_type': 'pond mother'}"
+                                   domain="[('device_type','=','pond mother')]"/>
+                            <field name="device_pondguard" widget="many2many_tags"
+                                   context="{'default_device_type': 'pond guard'}"
+                                   domain="[('device_type','=','pond guard')]"/>
                         </group>
                     </sheet>
                 </form>
@@ -30,9 +35,15 @@
                     <field name="partner_id"/>
                     <field name="location_id" optional="show"/>
                     <field name="name"/>
-                    <field name="pondmother_count"/>
-                    <field name="shrimptack_count"/>
-                    <field name="pondguard_count"/>
+                    <field name="device_shrimp" widget="many2many_tags"
+                           context="{'default_device_type': 'shrimp talk'}"
+                           domain="[('device_type','=','shrimp talk')]"/>
+                    <field name="device_pondmother" widget="many2many_tags"
+                           context="{'default_device_type': 'pond mother'}"
+                           domain="[('device_type','=','pond mother')]"/>
+                    <field name="device_pondguard" widget="many2many_tags"
+                           context="{'default_device_type': 'pond guard'}"
+                           domain="[('device_type','=','pond guard')]"/>
                 </tree>
             </field>
         </record>

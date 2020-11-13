@@ -17,37 +17,53 @@
                             <field name="pondmother_count"/>
                             <field name="shrimptack_count"/>
                             <field name="pondguard_count"/>
-                           <!-- <field name="pond_ids"
-                            options="{'no_create_edit': True}"/>-->
                         </group>
                         <notebook>
                             <page string="Ponds">
-                                <field name="pond_ids" mode="tree,form">
+                                <field name="pond_ids" mode="tree,form" context="{'default_partner_id': customer_id}">
                                     <tree options="{'no_create_edit': True, 'no_create':True}">
                                         <field name="partner_id" domain="[('id','=',parent.id)]" invisible="1"/>
                                         <field name="location_id"/>
                                         <field name="name"/>
-                                        <field name="pondmother_count"/>
-                                        <field name="shrimptack_count"/>
-                                        <field name="pondguard_count"/>
-<!--                                        <field name="pondlog_count"/>-->
+                                        <field name="device_shrimp" widget="many2many_tags"
+                                                   context="{'default_device_type': 'shrimp talk'}"
+                                                   domain="[('device_type','=','shrimp talk')]"/>
+                                        <field name="device_pondmother" widget="many2many_tags"
+                                                   context="{'default_device_type': 'pond mother'}"
+                                                   domain="[('device_type','=','pond mother')]"/>
+                                        <field name="device_pondguard" widget="many2many_tags"
+                                                   context="{'default_device_type': 'pond guard'}"
+                                                   domain="[('device_type','=','pond guard')]"/>
                                     </tree>
                                     <form>
                                         <group>
                                             <field name="partner_id" readonly="1" domain="[('id','=',parent.id)]"/>
                                             <field name="location_id"/>
                                             <field name="name"/>
-                                            <field name="pondmother_count"/>
-                                            <field name="shrimptack_count"/>
-                                            <field name="pondguard_count"/>
-<!--                                            <field name="pondlog_count" readonly="True"/>-->
+                                            <field name="device_shrimp" widget="many2many_tags"
+                                                   context="{'default_device_type': 'shrimp talk'}"
+                                                   domain="[('device_type','=','shrimp talk')]"/>
+                                            <field name="device_pondmother" widget="many2many_tags"
+                                                   context="{'default_device_type': 'pond mother'}"
+                                                   domain="[('device_type','=','pond mother')]"/>
+                                            <field name="device_pondguard" widget="many2many_tags"
+                                                   context="{'default_device_type': 'pond guard'}"
+                                                   domain="[('device_type','=','pond guard')]"/>
                                             <field name="pondlog_by_pond" widget="one2many"
                                                    options="{'no_create_edit': True, 'no_create':True}"
                                                    attrs="{
                                                    'invisible': [('partner_id', '=', 1)]}">
                                                 <tree limit="10">
-                                                   <field name="pond_ids"
-                                                            widget="many2many_tags"/>
+                                                    <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                         domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
+                                                         optional="hide" style="vertical-align:baseline;max-width:500px;"/>
+                                                    <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                                 optional="hide"/>
+                                                    <field name="pond_ids" widget="many2many_tags"
+                                                                 domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                                                 options="{'no_create_edit': True, 'no_create':True}" optional="show"/>
+                                                    <field name="device_ids" widget="many2many_tags"
+                                                            domain="[('pond_id','in',pond_ids)]" optional="show"/>
                                                     <field name="issue_type"/>
                                                     <field name="label_issue" />
                                                     <field name="description"/>
@@ -58,6 +74,7 @@
                                                     <field name="create_date" string="Created On" widget="date"/>
                                                     <field name="create_uid" string="Created By"/>
                                                     <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
+                                                    <field name="write_uid" optional="hide" string="Last Updated By" widget="date" />
                                                     <field name="priority" decoration-primary="priority == 'low'"
                                                            decoration-warning="priority == 'medium'"
                                                            decoration-danger="priority == 'high'" widget="badge" optional="show"/>
@@ -70,23 +87,38 @@
                             </page>
                             <page string="Daily Observations">
                                 <field name="pondlog_ids"
-                                       options="{'no_create_edit': True}" readonly="1" limit="10"/>
+                                       options="{'no_create_edit': True}" readonly="1" limit="10">
+                                    <tree limit="10">
+                                        <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                     domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
+                                                     optional="hide"/>
+                                        <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                     optional="show"/>
+                                        <field name="pond_ids" widget="many2many_tags"
+                                                     domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                                     options="{'no_create_edit': True, 'no_create':True}" optional="show"/>
+                                        <field name="device_ids" widget="many2many_tags"
+                                                domain="[('pond_id','in',pond_ids)]" optional="show"/>
+                                        <field name="issue_type"/>
+                                        <field name="label_issue" />
+                                        <field name="description"/>
+                                        <field name="description_file" optional="hide"/>
+                                        <field name="resolution_analysis" optional="hide"/>
+                                        <field name="ticket_status"
+                                               decoration-warning="ticket_status == 'open'"
+                                               decoration-success="ticket_status == 'closed'" widget="badge" optional="show"/>
+                                        <field name="user_id"/>
+                                        <field name="create_date" string="Created On" widget="date"/>
+                                        <field name="create_uid" string="Created By"/>
+                                        <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
+                                        <field name="write_uid" optional="hide" string="Last Updated By" widget="date" />
+                                        <field name="priority" decoration-primary="priority == 'low'"
+                                               decoration-warning="priority == 'medium'"
+                                               decoration-danger="priority == 'high'" widget="badge" optional="show"/>
+                                    </tree>
+                                </field>
                             </page>
                             <page string="Issue Analysis">
-<!--                                <field name="name">Issueanalysis.graph</field>-->
-<!--                                <field name="model">pondlog</field>-->
-<!--                                <field name="arch" type="xml">-->
-<!--                                    <graph string="Invoices" type="bar,pie" stacked="1" sample="1">-->
-<!--                                        <field name="issue"/>                                        -->
-<!--                                        <field name="amount" type="measure"/>-->
-<!--                                    </graph>-->
-<!--                                </field>-->
-<!--                                <field name="pondlog_ids">-->
-<!--                                       <graph string="Issue Analysis" orientation="horizontal" type="bar">-->
-<!--                                          <field name="issue" group="True"/>-->
-<!--                                          <field name="issue" operator="+"/>-->
-<!--                                       </graph>-->
-<!--                                </field>-->
                             </page>
                         </notebook>
                     </sheet>

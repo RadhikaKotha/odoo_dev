@@ -6,23 +6,27 @@
             <field name="name">pondlog.form</field>
             <field name="model">pondlog</field>
             <field name="arch" type="xml">
-                <form string="Pondlog Form">
+                <form string="Pondlog Form" options="{'edit': [('ticket_status','=','open')]}">
                     <sheet>
                         <group>
                             <field name="locations" invisible="1"/>
                             <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
-                                                        domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"/>
+                                         domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"/>
                             <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
-                                    domain="[('id','in',locations)]"/>
-                            <field name="pond_ids" domain="[('location_id','=',location_id)]"
-                                         widget="many2many_tags" options="{'no_create_edit': True, 'no_create':True}"/>
+                                         domain="[('id','in',locations)]"/>
+                            <field name="pond_ids" widget="many2many_tags"
+                                         domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                         options="{'no_create_edit': True, 'no_create':True}"/>
+                            <field name="device_ids" widget="many2many_tags"
+                                    domain="[('pond_id','in',pond_ids)]"/>
                             <field name="issue_type"/>
                             <field name="label_issue" />
                             <field name="priority"/>
                             <field name="description"/>
                             <field name="description_file" filename="description_filename"/>
                             <field name="description_filename" invisible="1"/>
-                            <field name="mul_image" string="Description images">
+                            <field name="mul_image" string="Description images"
+                                   style="max-width:600px;max-height:200px;">
                                 <form>
                                     <field name="mul_image" widget="image"/>
                                     <field name="image_id" invisible="1"/>
@@ -38,41 +42,57 @@
                             <field name="user_id"/>
                             <field name="pondlog_history" options="{'no_create_edit': True,
                                                             'no_create':True, 'no_quick_create':True}"
-                                                        attrs="{'invisible': [('create_uid','=',False)]}">
+                                                        attrs="{'invisible': [('create_uid','=',False)]}"
+                                            style="vertical-align:baseline;max-width:900px;">
                                 <tree string="Pondlog Tree view" limit="10">
-<!--                                    <field name="partner_id"/>-->
-<!--                                    <field name="location_id"/>-->
-<!--                                    <field name="pond_ids"-->
-<!--                                          widget="many2many_tags" options="{'no_create_edit': True, 'no_create':True}"/>-->
+                                    <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                 domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
+                                                 optional="hide"/>
+                                    <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                    <field name="pond_ids" widget="many2many_tags"
+                                                 domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                                 options="{'no_create_edit': True, 'no_create':True}" optional="hide"/>
+                                    <field name="device_ids" widget="many2many_tags"
+                                            domain="[('pond_id','in',pond_ids)]" optional="hide"/>
                                     <field name="issue_type"/>
                                     <field name="label_issue" />
                                     <field name="description"/>
                                     <field name="description_file" optional="hide"/>
                                     <field name="resolution_analysis" optional="hide"/>
-                                    <field name="ticket_status"/>
+                                    <field name="ticket_status"
+                                           decoration-warning="ticket_status == 'open'"
+                                           decoration-success="ticket_status == 'closed'" widget="badge" optional="show"/>
                                     <field name="user_id"/>
                                     <field name="create_date" string="Created On" widget="date"/>
                                     <field name="create_uid" string="Created By"/>
                                     <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
-                                    <field name="priority" decoration-primary="priority == 'low'" decoration-warning="priority == 'medium'" decoration-danger="priority == 'high'" widget="badge" optional="show"/>
+                                    <field name="write_uid" optional="hide" string="Last Updated By" widget="date" />
+                                    <field name="priority" decoration-primary="priority == 'low'"
+                                           decoration-warning="priority == 'medium'"
+                                           decoration-danger="priority == 'high'" widget="badge" optional="show"/>
                                 </tree>
                                 <form>
                                     <group>
                                         <field name="locations" invisible="1"/>
-                                        <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                        <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                    domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"/>
                                         <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
-                                                domain="[('id','in',locations)]"/>
-                                        <field name="pond_ids" domain="[('location_id','=',location_id)]"
-                                                     widget="many2many_tags" options="{'no_create_edit': True, 'no_create':True}"/>
+                                                     domain="[('id','in',locations)]"/>
+                                        <field name="pond_ids" widget="many2many_tags"
+                                                 domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                                 options="{'no_create_edit': True, 'no_create':True}"/>
+                                        <field name="device_ids" widget="many2many_tags"
+                                                domain="[('pond_id','in',pond_ids)]"/>
                                         <field name="issue_type"/>
                                         <field name="label_issue" />
                                         <field name="priority"/>
                                         <field name="description"/>
                                         <field name="description_file" filename="description_filename"/>
                                         <field name="description_filename" invisible="1"/>
-                                        <field name="mul_image" string="Description images">
+                                        <field name="mul_image" string="Description images"
+                                               style="vertical-align:baseline;max-width:600px;max-height:200px;">
                                             <form>
-                                                <field name="mul_image" widget="image" />
+                                                <field name="mul_image" widget="image"/>
                                                 <field name="image_id" invisible="1"/>
                                             </form>
                                             <tree>
@@ -98,20 +118,28 @@
             <field name="model">pondlog</field>
             <field name="arch" type="xml">
                 <tree string="Pondlog Tree view" limit="10">
-                    <field name="partner_id"/>
-                    <field name="location_id"/>
-                   <field name="pond_ids"
-                          widget="many2many_tags"/>
-                    <field name="issue_type"/>
-                    <field name="label_issue" />
-                    <field name="description"/>
+                    <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                 domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
+                                 optional="show"/>
+                    <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                    <field name="pond_ids" widget="many2many_tags"
+                                 domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                 options="{'no_create_edit': True, 'no_create':True}" optional="show"/>
+                    <field name="device_ids" widget="many2many_tags"
+                            domain="[('pond_id','in',pond_ids)]" optional="show"/>
+                    <field name="issue_type" optional="show"/>
+                    <field name="label_issue" optional="hide"/>
+                    <field name="description" optional="hide"/>
                     <field name="description_file" optional="hide"/>
                     <field name="resolution_analysis" optional="hide"/>
-                    <field name="ticket_status"/>
+                    <field name="ticket_status"
+                           decoration-warning="ticket_status == 'open'"
+                           decoration-success="ticket_status == 'closed'" widget="badge" optional="show"/>
                     <field name="user_id"/>
-                    <field name="create_date" string="Created On" widget="date"/>
-                    <field name="create_uid" string="Created By"/>
-                    <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
+                    <field name="create_date" string="Created On" widget="date" optional="show"/>
+                    <field name="create_uid" string="Created By" optional="show"/>
+                    <field name="write_date" optional="hide" string="Last Updated On" widget="date" />
+                    <field name="write_uid" optional="hide" string="Last Updated By" widget="date" />
                     <field name="priority" decoration-primary="priority == 'low'"
                            decoration-warning="priority == 'medium'"
                            decoration-danger="priority == 'high'" widget="badge" optional="show"/>

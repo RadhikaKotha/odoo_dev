@@ -1,12 +1,15 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_location,access_location_obj,device_cycle.model_location,device_cycle.group_pondlogs_user,1,1,1,1
 access_pond,access_pond_obj,device_cycle.model_pond,device_cycle.group_pondlogs_user,1,1,1,1
-access_log,access_log_obj,device_cycle.model_pondlog,device_cycle.group_pondlogs_user,1,1,1,1
-access_log_history,access_log_history_obj,device_cycle.model_pondlog_history,device_cycle.group_pondlogs_user,1,1,1,1
+access_log,access_log_obj,device_cycle.model_pondlog,device_cycle.group_pondlogs_user,1,1,1,0
+access_log_history,access_log_history_obj,device_cycle.model_pondlog_history,device_cycle.group_pondlogs_user,1,1,1,0
 
 access_mul_image,access_mul_image_obj,device_cycle.model_multiple_image,device_cycle.group_pondlogs_user,1,1,1,1
 access_label,access_label_obj,device_cycle.model_label,device_cycle.group_pondlogs_user,1,1,1,1
 access_issuetype,access_issuetype_obj,device_cycle.model_issue_type,device_cycle.group_pondlogs_user,1,1,1,1
+access_device,access_device,device_cycle.model_device,device_cycle.group_pondlogs_user,1,1,1,1
 
+access_logmanager,access_logmanager_obj,device_cycle.model_pondlog,device_cycle.group_pondlogs_manager,1,1,1,1
+access_logmanager_history,access_logmanager_history_obj,device_cycle.model_pondlog_history,device_cycle.group_pondlogs_manager,1,1,1,1
 
 
