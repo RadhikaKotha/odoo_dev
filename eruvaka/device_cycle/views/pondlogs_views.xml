@@ -117,7 +117,7 @@
             <field name="name">pondlog.tree</field>
             <field name="model">pondlog</field>
             <field name="arch" type="xml">
-                <tree string="Pondlog Tree view" limit="10">
+                <tree string="Pondlog Tree view" limit="10" default_order="id desc">
                     <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
                                  domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
                                  optional="show"/>
