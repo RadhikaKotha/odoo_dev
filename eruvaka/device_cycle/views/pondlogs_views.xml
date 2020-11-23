@@ -44,29 +44,28 @@
                                                             'no_create':True, 'no_quick_create':True}"
                                                         attrs="{'invisible': [('create_uid','=',False)]}"
                                             style="vertical-align:baseline;max-width:900px;">
-                                <tree string="Pondlog Tree view" limit="10">
+                                <tree string="Pondlog Tree view" limit="10" default_order="id desc">
                                     <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
                                                  domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
-                                                 optional="hide"/>
-                                    <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                                 invisible="1"/>
+                                    <field name="location_id" options="{'no_create_edit': True,
+                                                'no_create':True, 'no_open':True}" invisible="1"/>
                                     <field name="pond_ids" widget="many2many_tags"
                                                  domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
-                                                 options="{'no_create_edit': True, 'no_create':True}" optional="hide"/>
+                                                 options="{'no_create_edit': True, 'no_create':True}" invisible="1"/>
                                     <field name="device_ids" widget="many2many_tags"
-                                            domain="[('pond_id','in',pond_ids)]" optional="hide"/>
-                                    <field name="issue_type"/>
-                                    <field name="label_issue" />
-                                    <field name="description"/>
-                                    <field name="description_file" optional="hide"/>
-                                    <field name="resolution_analysis" optional="hide"/>
+                                            domain="[('pond_id','in',pond_ids)]" invisible="1"/>
+                                    <field name="issue_type" invisible="1"/>
+                                    <field name="description" invisible="1"/>
+                                    <field name="description_file" invisible="1"/>
+                                    <field name="resolution_analysis" optional="show"/>
+                                    <field name="user_id" optional="show"/>
+                                    <field name="create_date" optional="show" string="Last Updated On" widget="datetime"/>
+                                    <field name="create_uid" optional="show" string="Last Updated By"/>
+                                    <field name="label_issue" optional="show"/>
                                     <field name="ticket_status"
                                            decoration-warning="ticket_status == 'open'"
                                            decoration-success="ticket_status == 'closed'" widget="badge" optional="show"/>
-                                    <field name="user_id"/>
-                                    <field name="create_date" string="Created On" widget="date"/>
-                                    <field name="create_uid" string="Created By"/>
-                                    <field name="write_date" optional="hide" string="Last Updated On" widget="date"/>
-                                    <field name="write_uid" optional="hide" string="Last Updated By" widget="date" />
                                     <field name="priority" decoration-primary="priority == 'low'"
                                            decoration-warning="priority == 'medium'"
                                            decoration-danger="priority == 'high'" widget="badge" optional="show"/>
@@ -136,16 +135,28 @@
                            decoration-warning="ticket_status == 'open'"
                            decoration-success="ticket_status == 'closed'" widget="badge" optional="show"/>
                     <field name="user_id"/>
-                    <field name="create_date" string="Created On" widget="date" optional="show"/>
+                    <field name="create_date" string="Created On" widget="datetime" optional="show"/>
                     <field name="create_uid" string="Created By" optional="show"/>
-                    <field name="write_date" optional="hide" string="Last Updated On" widget="date" />
-                    <field name="write_uid" optional="hide" string="Last Updated By" widget="date" />
+                    <field name="write_date" optional="hide" string="Last Updated On" widget="datetime" />
+                    <field name="write_uid" optional="hide" string="Last Updated By"/>
                     <field name="priority" decoration-primary="priority == 'low'"
                            decoration-warning="priority == 'medium'"
                            decoration-danger="priority == 'high'" widget="badge" optional="show"/>
                 </tree>
             </field>
         </record>
+
+<!--         <record model="ir.ui.view" id="customer_issues_graph">-->
+<!--            <field name="name">customer.issues.graph</field>-->
+<!--            <field name="model">pondlog</field>-->
+<!--            <field name="arch" type="xml">-->
+<!--                <graph string="Issues By Status" type="pie" sample="1">-->
+<!--                    <field name="ticket_status"/>-->
+<!--                    <field name="issue_type"/>-->
+<!--                    <field name="priority"/>-->
+<!--                </graph>-->
+<!--            </field>-->
+<!--        </record>-->
 
         <record id="pondlog_search_view" model="ir.ui.view">
             <field name="name">pondlog.search</field>
@@ -171,7 +182,7 @@
 
         <!-- Menu -->
         <menuitem id="menu_pondlog" action="action_new_pondlog" parent="pondlog_menu"
-                  groups="group_pondlogs_user" sequence="2"/>
+                  groups="group_pondlogs_user" sequence="1"/>
 
     </data>
 </odoo>

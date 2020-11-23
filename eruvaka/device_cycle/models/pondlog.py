@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
+from odoo.http import request
 
 class Location(models.Model):
     _name = "location"
@@ -39,8 +40,14 @@ class Device(models.Model):
 
     pond_id = fields.Many2one('pond', string="Pond ID")
 
+    # _sql_constraints = [('device_id_unique', 'unique(device_id)', 'Device already exists')]
+
     @api.model
     def create(self, vals):
+        # devices = self.sudo().env['device'].search([('device_id', '=', vals['device_id'])])
+        # if devices:
+        #     raise UserError(
+        #         _('Device already exists'))
         device_object = super(Device, self).create(vals)
         return device_object
 
@@ -82,19 +89,37 @@ class Pond(models.Model):
             devices.append(pndm.id)
         for pnds in ps:
             devices.append(pnds.id)
+        # pond = self.env['device'].search([('id', 'in', devices), ('pond_id', '!=', False)])
+        # if pond:
+        #     raise UserError(
+        #         _('Device already attached to ' + pond.pond_id))
         # updating all the devices rows with pond_id
         self.write({
             'device_ids': [(6, 0, devices)]
         })
 
+    # @api.onchange('device_pondguard', 'device_shrimp', 'device_pondmother')
+    # def checkdeviceattached(self):
+    #     devices = []
+    #     pg = self.mapped('device_pondguard')
+    #     pm = self.mapped('device_pondmother')
+    #     ps = self.mapped('device_shrimp')
+    #     # getting all the devices attached to the pond and appending to the empty list
+    #     for pndg in pg:
+    #         devices.append(pndg.id)
+    #     for pndm in pm:
+    #         devices.append(pndm.id)
+    #     for pnds in ps:
+    #         print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', [pnds])
+    #         devices.append(pnds.keys())
+    #     print('bbbbbbbbbbbbbbbbbbbbbbbbb', devices)
+    #     pond = self.env['device'].search([('id', 'in', devices), ('pond_id', '!=', False)])
+    #     if pond:
+    #         raise UserError(
+    #             _('Device already attached to ' + pond.pond_id))
+
     @api.model
     def create(self, vals):
-        # devices = self.sudo().env['device'].search([])
-        # for device in devices:
-        #     if device.device_id == vals['device_id']:
-        #         pndname = device.pond_id
-        #         raise UserError(
-        #             _('Device already attached to this pond ' + pndname))
         pond_object = super(Pond, self).create(vals)
         return pond_object
 
@@ -284,7 +309,7 @@ class Pondlog(models.Model):
                          '". The issue is ' + '"' + description + '" and needs your attention.<br/><br/>'
                          'Please click here to go to the page: '
                          u'<a href="http://52.66.211.244:8069/web#id=' + model_id +
-                         '&action=355&model=pondlog&view_type=form&cids=&menu_id=262">'
+                         '&action=343&model=pondlog&view_type=form&cids=&menu_id=245">'
                          'ST Response Tracking</a><br/><br/>'
                          'Have a nice day!<br/><b>Eruvaka Team</b>',
         })
