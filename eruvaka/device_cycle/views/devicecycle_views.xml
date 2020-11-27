@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Views -->
+        <record id="devicecycle_form_view" model="ir.ui.view">
+            <field name="name">device.form</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <form string="Device Form">
+                    <sheet>
+                        <group>
+                            <field name="device_type"/>
+                            <field name="device_id"/>
+                            <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                         domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"/>
+                            <field name="state"/>
+                            <field name="from_date"/>
+<!--                            <field name="to_date"/>-->
+                            <field name="comments"/>
+                            <field name="create_uid" string="Created By" invisible="1"/>
+                            <field name="devicecycle_history" options="{'no_create_edit': True,
+                                                            'no_create':True, 'no_quick_create':True}"
+                                                        attrs="{'invisible': [('create_uid','=',False)]}"
+                                            style="vertical-align:baseline;max-width:900px;">
+                                <tree string="Devicecycle History Tree view" limit="10" default_order="id desc">
+                                    <field name="partner_id"/>
+                                    <field name="state"/>
+                                    <field name="from_date"/>
+                                    <field name="to_date"/>
+                                    <field name="no_of_days" type="char"/>
+                                    <field name="comments"/>
+                                </tree>
+                            </field>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="devicecycle_tree_view" model="ir.ui.view">
+            <field name="name">device.tree</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <tree string="DeviceCycle Desc">
+                    <field name="device_id"/>
+                    <field name="device_type"/>
+                    <field name="partner_id"/>
+                    <field name="state"/>
+                    <field name="from_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="devicecycle_search_view" model="ir.ui.view">
+            <field name="name">device.search</field>
+            <field name="model">device</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="device_id"/>
+                </search>
+            </field>
+        </record>
+
+         <!-- Action -->
+        <record id="action_new_device" model="ir.actions.act_window">
+            <field name="name">Devices</field>
+            <field name="res_model">device</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new Device</p>
+            </field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_devicecycle" action="action_new_device" parent="pondlog_menu"
+                  groups="group_pondlogs_user" sequence="3"
+               />
+
+    </data>
+</odoo>

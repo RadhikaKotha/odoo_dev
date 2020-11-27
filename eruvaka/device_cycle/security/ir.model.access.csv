@@ -8,6 +8,7 @@ access_mul_image,access_mul_image_obj,device_cycle.model_multiple_image,device_c
 access_label,access_label_obj,device_cycle.model_label,device_cycle.group_pondlogs_user,1,1,1,1
 access_issuetype,access_issuetype_obj,device_cycle.model_issue_type,device_cycle.group_pondlogs_user,1,1,1,1
 access_device,access_device,device_cycle.model_device,device_cycle.group_pondlogs_user,1,1,1,1
+access_devicecycle_history,access_devicecycle_history,device_cycle.model_devicecycle_history,device_cycle.group_pondlogs_user,1,1,1,1
 
 access_logmanager,access_logmanager_obj,device_cycle.model_pondlog,device_cycle.group_pondlogs_manager,1,1,1,1
 access_logmanager_history,access_logmanager_history_obj,device_cycle.model_pondlog_history,device_cycle.group_pondlogs_manager,1,1,1,1

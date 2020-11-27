@@ -13,14 +13,14 @@
                             <field name="location_id"/>
                             <field name="name"/>
                             <field name="device_shrimp" widget="many2many_tags"
-                                   context="{'default_device_type': 'shrimp talk'}"
-                                   domain="[('device_type','=','shrimp talk')]"/>
+                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                   domain="['&amp;',('device_type','=','shrimp talk'),('partner_id', '=', partner_id)]"/>
                             <field name="device_pondmother" widget="many2many_tags"
-                                   context="{'default_device_type': 'pond mother'}"
-                                   domain="[('device_type','=','pond mother')]"/>
+                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                   domain="['&amp;',('device_type','=','pond mother'),('partner_id', '=', partner_id)]"/>
                             <field name="device_pondguard" widget="many2many_tags"
-                                   context="{'default_device_type': 'pond guard'}"
-                                   domain="[('device_type','=','pond guard')]"/>
+                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                   domain="['&amp;',('device_type','=','pond guard'),('partner_id', '=', partner_id)]"/>
                         </group>
                     </sheet>
                 </form>
@@ -36,14 +36,14 @@
                     <field name="location_id" optional="show"/>
                     <field name="name"/>
                     <field name="device_shrimp" widget="many2many_tags"
-                           context="{'default_device_type': 'shrimp talk'}"
-                           domain="[('device_type','=','shrimp talk')]"/>
+                           options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                           domain="['&amp;',('device_type','=','shrimp talk'),('partner_id', '=', partner_id)]"/>
                     <field name="device_pondmother" widget="many2many_tags"
-                           context="{'default_device_type': 'pond mother'}"
-                           domain="[('device_type','=','pond mother')]"/>
+                           options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                           domain="['&amp;',('device_type','=','pond mother'),('partner_id', '=', partner_id)]"/>
                     <field name="device_pondguard" widget="many2many_tags"
-                           context="{'default_device_type': 'pond guard'}"
-                           domain="[('device_type','=','pond guard')]"/>
+                           options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                           domain="['&amp;',('device_type','=','pond guard'),('partner_id', '=', partner_id)]"/>
                 </tree>
             </field>
         </record>
@@ -70,7 +70,7 @@
             </field>
         </record>
 
-        <!-- Menu -->
+<!--         Menu -->
 <!--       <menuitem id="menu_pond" action="action_new_pond" parent="pondlog_menu"-->
 <!--                  groups="group_pondlogs_manager" sequence="3"-->
 <!--               />-->

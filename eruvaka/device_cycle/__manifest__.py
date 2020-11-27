@@ -15,7 +15,9 @@
         'views/pond_views.xml',
         'views/pondlogs_views.xml',
         'views/customer_views.xml',
+        'views/devicecycle_views.xml',
         'templates/mail_template.xml',
+        #'reports/issue_analysis_views.xml',
         'security/ir.model.access.csv',
 
     ],

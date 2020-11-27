@@ -1,6 +1,5 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
-from odoo.http import request
 
 class Location(models.Model):
     _name = "location"
@@ -37,24 +36,139 @@ class Device(models.Model):
     device_type = fields.Selection([('shrimp talk', 'Shrimp Talk'),
         ('pond mother', 'Pond Mother'), ('pond guard', 'Pond Guard'), ],
         copy=False, index=True, track_visibility='onchange', track_sequence=3, string='Device Type')
+    partner_id = fields.Many2one('res.partner', string='Current Location', invisible=True)
+    state = fields.Selection([('issued from Factory', 'Issued from Factory'),
+                              ('installed at Customer Farm', 'Installed at Customer Farm'),
+                              ('idle at Customer Farm', 'Idle at Customer Farm'),
+                              ('returned from Customer Farm', 'Returned from Customer Farm'),
+                              ('waiting for Service / Repair', 'Waiting for Service / Repair'),
+                              ('refurbished (Tanguturu Warehouse)', 'Refurbished (Tanguturu Warehouse)'),
+                              ('refurbished (Gudivada Warehouse)', 'Refurbished (Gudivada Warehouse)'), ],
+                             string="State")
+    comments = fields.Text('Comments')
+    from_date = fields.Date('From Date', default=fields.Datetime.now())
+    devicecycle_history = fields.One2many('devicecycle.history', 'devicecycle_id', string="Device History",
+                                          readonly="True")
 
     pond_id = fields.Many2one('pond', string="Pond ID")
 
-    # _sql_constraints = [('device_id_unique', 'unique(device_id)', 'Device already exists')]
-
     @api.model
     def create(self, vals):
-        # devices = self.sudo().env['device'].search([('device_id', '=', vals['device_id'])])
-        # if devices:
-        #     raise UserError(
-        #         _('Device already exists'))
+        devices = self.sudo().env['device'].search([])
+        for device in devices:
+            if device.device_id == vals['device_id']:
+                raise UserError(
+                    _('Device ID already exists'))
         device_object = super(Device, self).create(vals)
         return device_object
 
     def write(self, vals):
+        if 'from_date' not in vals:
+            to_date = None
+        else:
+            to_date = vals['from_date']
+        for device in self:
+            if 'from_date' not in device:
+                from_date = None
+            else:
+                from_date = device.from_date
+            device_prev = {
+                'device_type': device.device_type,
+                'device_id': device.device_id,
+                'partner_id': device.partner_id.id,
+                'state': device.state,
+                'comments': device.comments,
+                'from_date': from_date,
+                'to_date': to_date,
+                'devicecycle_id': device.id,
+            }
+            # Creating old record into devicecycle history table
+            device.sudo().env['devicecycle.history'].create(device_prev)
+
         device_object = super(Device, self).write(vals)
         return device_object
 
+# class Devicecycle(models.Model):
+#     _name = "devicecycle"
+#     _description = "device cycle details"
+#     _rec_name = "device_id"
+#
+#     device_type = fields.Selection([('shrimp talk', 'Shrimp Talk'),
+#                                     ('pond mother', 'Pond Mother'), ('pond guard', 'Pond Guard'), ],
+#                                    copy=False, index=True, track_visibility='onchange', track_sequence=3,
+#                                    string='Device Type')
+#     device_id = fields.Char('Device ID')
+#     partner_id = fields.Many2one('res.partner', string='Current Location', invisible=True)
+#     state = fields.Selection([('available', 'Available'),
+#                               ('installed', 'Installed'),
+#                               ('returned', 'Returned'),
+#                               ('refurbished', 'Refurbished'), ], string="Current State")
+#     comments = fields.Text('Comments')
+#     from_date = fields.Datetime('From Date', readonly="True", default=fields.Datetime.now())
+#     to_date = fields.Datetime('To Date')
+#     devicecycle_history = fields.One2many('devicecycle.history', 'devicecycle_id', string="Device History",
+#                                       readonly="True")
+#
+#     @api.model
+#     def create(self, vals):
+#         devices = self.sudo().env['devicecycle'].search([])
+#         for device in devices:
+#             if device.device_id == vals['device_id']:
+#                 raise UserError(
+#                     _('Device ID already exists'))
+#         devicecycle_object = super(Devicecycle, self).create(vals)
+#         return devicecycle_object
+#
+#     def write(self, vals):
+#         devicecycle_prev = {
+#             'device_type': self.device_type,
+#             'device_id': self.device_id,
+#             'partner_id': self.partner_id.id,
+#             'state': self.state,
+#             'comments': self.comments,
+#             'from_date': self.from_date,
+#             'to_date': fields.Datetime.now(),
+#             'devicecycle_id': self.id,
+#         }
+#
+#         # Creating old record into devicecycle history table
+#         self.sudo().env['devicecycle.history'].create(devicecycle_prev)
+#
+#         devicecycle_object = super(Devicecycle, self).write(vals)
+#         return devicecycle_object
+
+class DevicecycleHistory(models.Model):
+    _name = "devicecycle.history"
+    _description = "device history details"
+
+    device_type = fields.Selection([('shrimp talk', 'Shrimp Talk'),
+                                    ('pond mother', 'Pond Mother'), ('pond guard', 'Pond Guard'), ],
+                                   copy=False, index=True, track_visibility='onchange', track_sequence=3,
+                                   string='Device Type')
+    device_id = fields.Char('Device ID')
+    partner_id = fields.Many2one('res.partner', string='Location', invisible=True)
+    state = fields.Selection([('issued from Factory', 'Issued from Factory'),
+                              ('installed at Customer Farm', 'Installed at Customer Farm'),
+                              ('idle at Customer Farm', 'Idle at Customer Farm'),
+                              ('returned from Customer Farm', 'Returned from Customer Farm'),
+                              ('waiting for Service / Repair', 'Waiting for Service / Repair'),
+                              ('refurbished (Tanguturu Warehouse)', 'Refurbished (Tanguturu Warehouse)'),
+                              ('refurbished (Gudivada Warehouse)', 'Refurbished (Gudivada Warehouse)'), ],
+                                string="State")
+    comments = fields.Text('Comments')
+    from_date = fields.Date('From Date')
+    to_date = fields.Date('To Date')
+    no_of_days = fields.Char('No Of Days', compute="_getnumberofdays")
+    devicecycle_id = fields.Many2one('device')
+
+    def _getnumberofdays(self):
+        for device in self:
+            if not device.to_date:
+                device.no_of_days = 0
+            if not device.from_date:
+                device.no_of_days = 0
+            else:
+                device.no_of_days = str(int((device.to_date-device.from_date).days))
 
 class Pond(models.Model):
     _name = "pond"
@@ -89,34 +203,11 @@ class Pond(models.Model):
             devices.append(pndm.id)
         for pnds in ps:
             devices.append(pnds.id)
-        # pond = self.env['device'].search([('id', 'in', devices), ('pond_id', '!=', False)])
-        # if pond:
-        #     raise UserError(
-        #         _('Device already attached to ' + pond.pond_id))
+
         # updating all the devices rows with pond_id
         self.write({
             'device_ids': [(6, 0, devices)]
         })
-
-    # @api.onchange('device_pondguard', 'device_shrimp', 'device_pondmother')
-    # def checkdeviceattached(self):
-    #     devices = []
-    #     pg = self.mapped('device_pondguard')
-    #     pm = self.mapped('device_pondmother')
-    #     ps = self.mapped('device_shrimp')
-    #     # getting all the devices attached to the pond and appending to the empty list
-    #     for pndg in pg:
-    #         devices.append(pndg.id)
-    #     for pndm in pm:
-    #         devices.append(pndm.id)
-    #     for pnds in ps:
-    #         print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa', [pnds])
-    #         devices.append(pnds.keys())
-    #     print('bbbbbbbbbbbbbbbbbbbbbbbbb', devices)
-    #     pond = self.env['device'].search([('id', 'in', devices), ('pond_id', '!=', False)])
-    #     if pond:
-    #         raise UserError(
-    #             _('Device already attached to ' + pond.pond_id))
 
     @api.model
     def create(self, vals):
@@ -232,8 +323,10 @@ class Pondlog(models.Model):
         for pond in ponds:
             pndnames.append(pond.name)
 
-        self.send_mail(vals['user_id'], vals['partner_id'], vals['issue_type'], pndnames, vals['location_id'], vals['description'])
         pondlog_object = super(Pondlog, self).create(vals)
+        model_id = pondlog_object.id
+        self.send_mail(vals['user_id'], vals['partner_id'], vals['issue_type'], pndnames, vals['location_id'],
+                       vals['description'], model_id)
         return pondlog_object
 
     def write(self, vals):
@@ -257,6 +350,11 @@ class Pondlog(models.Model):
 
         # Creating old record into pondlog history table
         self.sudo().env['pondlog.history'].create(pondlog_prev)
+
+        if 'pondlog_id' not in vals:
+            model_id = self.id
+        else:
+            model_id = vals['pondlog_id']
 
         if 'user_id' not in vals:
             user = self.user_id.id
@@ -288,18 +386,18 @@ class Pondlog(models.Model):
         else:
             location = vals['location_id']
 
-        self.send_mail(user, custmr, issue_type, pndnames, location, description)
+        self.send_mail(user, custmr, issue_type, pndnames, location, description, model_id)
 
         pondlog_object = super(Pondlog, self).write(vals)
         return pondlog_object
 
-    def send_mail(self, assigned, custmr, issue_type, pndnames, location, description):
+    def send_mail(self, assigned, custmr, issue_type, pndnames, location, description, model_id):
         pndnames = str(pndnames)
         user = self.sudo().env['res.users'].search([('id', '=', assigned)])
         customer = self.sudo().env['res.partner'].search([('id', '=', custmr)])
         location = self.sudo().env['location'].search([('id', '=', location)])
         issue = self.sudo().env['issue.type'].search([('id', '=', issue_type)])
-        model_id = str(self.id)
+        model_id = str(model_id)
         template = self.env.ref('device_cycle.mail_template_daily_observation_users')
         template.write({
             'subject': customer.name + ': "' + issue.name + ' Issue"',
@@ -309,7 +407,7 @@ class Pondlog(models.Model):
                          '". The issue is ' + '"' + description + '" and needs your attention.<br/><br/>'
                          'Please click here to go to the page: '
                          u'<a href="http://52.66.211.244:8069/web#id=' + model_id +
-                         '&action=343&model=pondlog&view_type=form&cids=&menu_id=245">'
+                         u'&action=343&model=pondlog&view_type=form&cids=1&menu_id=245">'
                          'ST Response Tracking</a><br/><br/>'
                          'Have a nice day!<br/><b>Eruvaka Team</b>',
         })

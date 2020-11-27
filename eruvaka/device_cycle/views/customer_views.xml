@@ -26,14 +26,20 @@
                                         <field name="location_id"/>
                                         <field name="name"/>
                                         <field name="device_shrimp" widget="many2many_tags"
-                                                   context="{'default_device_type': 'shrimp talk'}"
-                                                   domain="[('device_type','=','shrimp talk')]"/>
+                                               context="{'default_device_type': 'shrimp talk'}"
+                                               domain="[('device_type','=','shrimp talk')]"/>
+<!--                                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"-->
+<!--                                                   domain="['&amp;',('device_type','=','shrimp talk'),('partner_id', '=', parent.id)]"/>-->
                                         <field name="device_pondmother" widget="many2many_tags"
-                                                   context="{'default_device_type': 'pond mother'}"
-                                                   domain="[('device_type','=','pond mother')]"/>
+                                               context="{'default_device_type': 'pond mother'}"
+                                               domain="[('device_type','=','pond mother')]"/>
+<!--                                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"-->
+<!--                                                   domain="['&amp;',('device_type','=','pond mother'),('partner_id', '=', parent.id)]"/>-->
                                         <field name="device_pondguard" widget="many2many_tags"
-                                                   context="{'default_device_type': 'pond guard'}"
-                                                   domain="[('device_type','=','pond guard')]"/>
+                                               context="{'default_device_type': 'pond guard'}"
+                                               domain="[('device_type','=','pond guard')]"/>
+<!--                                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"-->
+<!--                                                   domain="['&amp;',('device_type','=','pond guard'),('partner_id', '=', parent.id)]"/>-->
                                     </tree>
                                     <form>
                                         <group>
@@ -41,14 +47,20 @@
                                             <field name="location_id"/>
                                             <field name="name"/>
                                             <field name="device_shrimp" widget="many2many_tags"
-                                                   context="{'default_device_type': 'shrimp talk'}"
-                                                   domain="[('device_type','=','shrimp talk')]"/>
+                                               context="{'default_device_type': 'shrimp talk'}"
+                                               domain="[('device_type','=','shrimp talk')]"/>
+<!--                                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"-->
+<!--                                                   domain="['&amp;',('device_type','=','shrimp talk'),('partner_id', '=', parent.id)]"/>-->
                                             <field name="device_pondmother" widget="many2many_tags"
                                                    context="{'default_device_type': 'pond mother'}"
                                                    domain="[('device_type','=','pond mother')]"/>
+    <!--                                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"-->
+    <!--                                                   domain="['&amp;',('device_type','=','pond mother'),('partner_id', '=', parent.id)]"/>-->
                                             <field name="device_pondguard" widget="many2many_tags"
                                                    context="{'default_device_type': 'pond guard'}"
                                                    domain="[('device_type','=','pond guard')]"/>
+    <!--                                                   options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"-->
+    <!--                                                   domain="['&amp;',('device_type','=','pond guard'),('partner_id', '=', parent.id)]"/>-->
                                             <field name="pondlog_by_pond" widget="one2many"
                                                    options="{'no_create_edit': True, 'no_create':True}"
                                                    attrs="{
