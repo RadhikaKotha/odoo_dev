@@ -1,6 +1,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
 
+
 class Location(models.Model):
     _name = "location"
     _description = "Location details"
@@ -13,7 +14,7 @@ class Location(models.Model):
         for location in locations:
             if location.name == vals['name']:
                 raise UserError(
-                      _('Location already exists'))
+                    _('Location already exists'))
         location_object = super(Location, self).create(vals)
         return location_object
 
@@ -22,7 +23,7 @@ class Location(models.Model):
         for location in locations:
             if location.name == vals['name']:
                 raise UserError(
-                      _('Location already exists'))
+                    _('Location already exists'))
         location_object = super(Location, self).write(vals)
         return location_object
 
@@ -34,8 +35,9 @@ class Device(models.Model):
 
     device_id = fields.Char('Device ID')
     device_type = fields.Selection([('shrimp talk', 'Shrimp Talk'),
-        ('pond mother', 'Pond Mother'), ('pond guard', 'Pond Guard'), ],
-        copy=False, index=True, track_visibility='onchange', track_sequence=3, string='Device Type')
+                                    ('pond mother', 'Pond Mother'), ('pond guard', 'Pond Guard'), ],
+                                   copy=False, index=True, track_visibility='onchange', track_sequence=3,
+                                   string='Device Type')
     partner_id = fields.Many2one('res.partner', string='Current Location', invisible=True)
     state = fields.Selection([('issued from Factory', 'Issued from Factory'),
                               ('installed at Customer Farm', 'Installed at Customer Farm'),
@@ -88,55 +90,6 @@ class Device(models.Model):
         device_object = super(Device, self).write(vals)
         return device_object
 
-# class Devicecycle(models.Model):
-#     _name = "devicecycle"
-#     _description = "device cycle details"
-#     _rec_name = "device_id"
-#
-#     device_type = fields.Selection([('shrimp talk', 'Shrimp Talk'),
-#                                     ('pond mother', 'Pond Mother'), ('pond guard', 'Pond Guard'), ],
-#                                    copy=False, index=True, track_visibility='onchange', track_sequence=3,
-#                                    string='Device Type')
-#     device_id = fields.Char('Device ID')
-#     partner_id = fields.Many2one('res.partner', string='Current Location', invisible=True)
-#     state = fields.Selection([('available', 'Available'),
-#                               ('installed', 'Installed'),
-#                               ('returned', 'Returned'),
-#                               ('refurbished', 'Refurbished'), ], string="Current State")
-#     comments = fields.Text('Comments')
-#     from_date = fields.Datetime('From Date', readonly="True", default=fields.Datetime.now())
-#     to_date = fields.Datetime('To Date')
-#     devicecycle_history = fields.One2many('devicecycle.history', 'devicecycle_id', string="Device History",
-#                                       readonly="True")
-#
-#     @api.model
-#     def create(self, vals):
-#         devices = self.sudo().env['devicecycle'].search([])
-#         for device in devices:
-#             if device.device_id == vals['device_id']:
-#                 raise UserError(
-#                     _('Device ID already exists'))
-#         devicecycle_object = super(Devicecycle, self).create(vals)
-#         return devicecycle_object
-#
-#     def write(self, vals):
-#         devicecycle_prev = {
-#             'device_type': self.device_type,
-#             'device_id': self.device_id,
-#             'partner_id': self.partner_id.id,
-#             'state': self.state,
-#             'comments': self.comments,
-#             'from_date': self.from_date,
-#             'to_date': fields.Datetime.now(),
-#             'devicecycle_id': self.id,
-#         }
-#
-#         # Creating old record into devicecycle history table
-#         self.sudo().env['devicecycle.history'].create(devicecycle_prev)
-#
-#         devicecycle_object = super(Devicecycle, self).write(vals)
-#         return devicecycle_object
-
 class DevicecycleHistory(models.Model):
     _name = "devicecycle.history"
     _description = "device history details"
@@ -154,7 +107,7 @@ class DevicecycleHistory(models.Model):
                               ('waiting for Service / Repair', 'Waiting for Service / Repair'),
                               ('refurbished (Tanguturu Warehouse)', 'Refurbished (Tanguturu Warehouse)'),
                               ('refurbished (Gudivada Warehouse)', 'Refurbished (Gudivada Warehouse)'), ],
-                                string="State")
+                             string="State")
     comments = fields.Text('Comments')
     from_date = fields.Date('From Date')
     to_date = fields.Date('To Date')
@@ -163,12 +116,13 @@ class DevicecycleHistory(models.Model):
 
     def _getnumberofdays(self):
         for device in self:
-            if not device.to_date:
-                device.no_of_days = 0
             if not device.from_date:
                 device.no_of_days = 0
+            elif not device.to_date:
+                device.no_of_days = 0
             else:
-                device.no_of_days = str(int((device.to_date-device.from_date).days))
+                device.no_of_days = str(int((device.to_date - device.from_date).days))
+
 
 class Pond(models.Model):
     _name = "pond"
@@ -233,19 +187,22 @@ class Pond(models.Model):
                     for log in logs:
                         pondlogs_bypond.append(log.id)
                     self.pondlog_by_pond = pondlogs_bypond
+
     @api.model
     def _getCustomerId(self):
         x = self.env['res.partner'].search(['id', '=', self.active_ids])
         self.partner_id = x.id
+
 
 class MultipleImages(models.Model):
     _name = "multiple.image"
     _description = "multiple images"
 
     mul_image = fields.Binary('Selected Images', max_width=30,
-                               max_height=30)
+                              max_height=30)
     image_id = fields.Many2one('pondlog')
     image_history_id = fields.Many2one('pondlog.history')
+
 
 class Label(models.Model):
     _name = "label"
@@ -253,11 +210,13 @@ class Label(models.Model):
 
     name = fields.Char('Label name')
 
+
 class IssueType(models.Model):
     _name = "issue.type"
     _description = "issue details"
 
     name = fields.Char('Issue Type')
+
 
 class Pondlog(models.Model):
     _name = "pondlog"
@@ -275,11 +234,11 @@ class Pondlog(models.Model):
     partner_id = fields.Many2one('res.partner', string='Customer', required=True)
     resolution_analysis = fields.Text('Resolution/Analysis')
     ticket_status = fields.Selection([('open', 'Open'),
-        ('closed', 'Closed'),],copy=False, index=True, track_visibility='onchange',
-        track_sequence=2, default='open')
+                                      ('closed', 'Closed'), ], copy=False, index=True, track_visibility='onchange',
+                                     track_sequence=2, default='open')
     priority = fields.Selection([('high', 'High'),
                                  ('medium', 'Medium'), ('low', 'Low'), ], copy=False, index=True,
-                                 track_visibility='onchange', track_sequence=3)
+                                track_visibility='onchange', track_sequence=3)
     locations = fields.One2many('location', string='Locations', compute='_getlocationsbycustid')
     pondlog_history = fields.One2many('pondlog.history', 'pondlog_id', string="Reassignment History", readonly="True")
     mul_image = fields.One2many('multiple.image', 'image_id', auto_join=True)
@@ -402,16 +361,17 @@ class Pondlog(models.Model):
         template.write({
             'subject': customer.name + ': "' + issue.name + ' Issue"',
             'body_html': '<b>Dear ' + user.name + ', </b><br/><br/>'
-                         'There is an issue logged for customer "' + customer.name +
+                                                  'There is an issue logged for customer "' + customer.name +
                          '" in the ponds ' + pndnames + ' at location "' + location.name +
                          '". The issue is ' + '"' + description + '" and needs your attention.<br/><br/>'
-                         'Please click here to go to the page: '
-                         u'<a href="http://52.66.211.244:8069/web#id=' + model_id +
+                                                                  'Please click here to go to the page: '
+                                                                  u'<a href="http://52.66.211.244:8069/web#id=' + model_id +
                          u'&action=343&model=pondlog&view_type=form&cids=1&menu_id=245">'
                          'ST Response Tracking</a><br/><br/>'
                          'Have a nice day!<br/><b>Eruvaka Team</b>',
         })
         template.send_mail(user.id, force_send=True)
+
 
 class PondlogHistory(models.Model):
     _name = "pondlog.history"
@@ -458,6 +418,7 @@ class PondlogHistory(models.Model):
                         distinct_locations.append(pond.location_id.id)
                 self.locations = distinct_locations
 
+
 class Customer(models.Model):
     _name = "res.partner"
     _inherit = "res.partner"
@@ -468,9 +429,9 @@ class Customer(models.Model):
     pondguard_count = fields.Integer('PondGuard Count', compute="_getdevicescount")
     customer_id = fields.Char('Customer ID')
     pondlog_ids = fields.One2many('pondlog', 'partner_id', string="Daily logs", copy=True,
-                               auto_join=True)
+                                  auto_join=True)
     pond_ids = fields.One2many('pond', 'partner_id', string="Ponds", copy=True,
-                                 auto_join=True)
+                               auto_join=True)
 
     def _getPonds(self):
         for customer in self:
@@ -489,6 +450,8 @@ class Customer(models.Model):
             custmr.pondmother_count = pondmothercount
             custmr.shrimptack_count = shrimptalkcount
             custmr.pondguard_count = pondguardcount
+
+
 
 
 
