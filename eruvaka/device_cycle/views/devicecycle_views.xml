@@ -40,11 +40,18 @@
             <field name="name">device.tree</field>
             <field name="model">device</field>
             <field name="arch" type="xml">
-                <tree string="DeviceCycle Desc">
+                <tree string="DeviceCycle Desc" limit="10" default_order="write_date desc, create_date desc, id desc">
                     <field name="device_id"/>
                     <field name="device_type"/>
                     <field name="partner_id"/>
-                    <field name="state"/>
+                    <field name="state"
+                           decoration-danger="state == 'device Discarded'"
+                           decoration-info ="state == 'refurbished (Tanguturu Warehouse)' or state == 'refurbished (Gudivada Warehouse)'"
+                           decoration-muted ="state == 'idle at Customer Farm'"
+                           decoration-primary ="state == 'returned from Customer Farm'"
+                           decoration-success ="state == 'installed at Customer Farm'"
+                           decoration-warning="state == 'waiting for Service / Repair'"
+                            widget="badge" optional="show"/>
                     <field name="from_date"/>
                 </tree>
             </field>
@@ -62,7 +69,7 @@
 
          <!-- Action -->
         <record id="action_new_device" model="ir.actions.act_window">
-            <field name="name">Devices</field>
+            <field name="name">Device Management</field>
             <field name="res_model">device</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">

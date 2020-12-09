@@ -45,7 +45,8 @@ class Device(models.Model):
                               ('returned from Customer Farm', 'Returned from Customer Farm'),
                               ('waiting for Service / Repair', 'Waiting for Service / Repair'),
                               ('refurbished (Tanguturu Warehouse)', 'Refurbished (Tanguturu Warehouse)'),
-                              ('refurbished (Gudivada Warehouse)', 'Refurbished (Gudivada Warehouse)'), ],
+                              ('refurbished (Gudivada Warehouse)', 'Refurbished (Gudivada Warehouse)'),
+                              ('device Discarded', 'Device Discarded'), ],
                              string="State")
     comments = fields.Text('Comments')
     from_date = fields.Date('From Date', default=fields.Datetime.now())
@@ -90,6 +91,7 @@ class Device(models.Model):
         device_object = super(Device, self).write(vals)
         return device_object
 
+
 class DevicecycleHistory(models.Model):
     _name = "devicecycle.history"
     _description = "device history details"
@@ -106,7 +108,8 @@ class DevicecycleHistory(models.Model):
                               ('returned from Customer Farm', 'Returned from Customer Farm'),
                               ('waiting for Service / Repair', 'Waiting for Service / Repair'),
                               ('refurbished (Tanguturu Warehouse)', 'Refurbished (Tanguturu Warehouse)'),
-                              ('refurbished (Gudivada Warehouse)', 'Refurbished (Gudivada Warehouse)'), ],
+                              ('refurbished (Gudivada Warehouse)', 'Refurbished (Gudivada Warehouse)'),
+                              ('device Discarded', 'Device Discarded'), ],
                              string="State")
     comments = fields.Text('Comments')
     from_date = fields.Date('From Date')
@@ -450,9 +453,4 @@ class Customer(models.Model):
             custmr.pondmother_count = pondmothercount
             custmr.shrimptack_count = shrimptalkcount
             custmr.pondguard_count = pondguardcount
-
-
-
-
-
-
+            
