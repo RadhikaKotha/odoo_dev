@@ -146,17 +146,24 @@
             </field>
         </record>
 
-<!--         <record model="ir.ui.view" id="customer_issues_graph">-->
-<!--            <field name="name">customer.issues.graph</field>-->
-<!--            <field name="model">pondlog</field>-->
-<!--            <field name="arch" type="xml">-->
-<!--                <graph string="Issues By Status" type="pie" sample="1">-->
-<!--                    <field name="ticket_status"/>-->
-<!--                    <field name="issue_type"/>-->
-<!--                    <field name="priority"/>-->
-<!--                </graph>-->
-<!--            </field>-->
-<!--        </record>-->
+         <record model="ir.ui.view" id="customer_issue_status_graph">
+            <field name="name">customer.issues.graph</field>
+            <field name="model">pondlog</field>
+            <field name="arch" type="xml">
+                <graph string="Issues By Status" type="pie" sample="1">
+                    <field name="ticket_status"/>
+                </graph>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="customer_issue_type_graph">
+            <field name="name">customer.issuetype.graph</field>
+            <field name="model">pondlog</field>
+            <field name="arch" type="xml">
+                <graph string="Issues By IssueType" type="pie" sample="1">
+                    <field name="issue_type"/>
+                </graph>
+            </field>
+        </record>
 
         <record id="pondlog_search_view" model="ir.ui.view">
             <field name="name">pondlog.search</field>
@@ -172,7 +179,7 @@
 
          <!-- Action -->
         <record id="action_new_pondlog" model="ir.actions.act_window">
-            <field name="name">Daily Observations</field>
+            <field name="name">ST Daily Observations</field>
             <field name="res_model">pondlog</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">

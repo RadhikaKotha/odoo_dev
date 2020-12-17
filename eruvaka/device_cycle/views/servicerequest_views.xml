@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Views -->
+        <record id="servicerequest_form_view" model="ir.ui.view">
+            <field name="name">servicerequest.form</field>
+            <field name="model">servicerequest</field>
+            <field name="arch" type="xml">
+                <form string="Service Request Form">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="request_id" readonly="1"/>
+                            </h1>
+                        </div>
+                    <!-- Service Request creation fields -->
+                        <group colspan="2">
+                            <field name="locations" invisible="1"/>
+                            <field name="request_type"/>
+                        <!-- Device Mobilization fields -->
+                            <field name="source" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                            <field name="source_location" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                            <field name="destination" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                            <field name="destination_location" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                            <field name="vehicle_no" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                        <!-- End of Device Mobilization fields -->
+                            <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                   domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
+                                   attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                                   'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"/>
+                            <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                   attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                                   'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"
+                                   domain="[('id','in',locations)]"/>
+                            <field name="pond_ids" widget="many2many_tags"
+                                   domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                   attrs="{'invisible':[('request_type', 'not in', ['troubleshoot and Repair'])]}"
+                                   options="{'no_create_edit': True, 'no_create':True}"/>
+                            <field name="user_id" widget="many2many_tags" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                            <field name="description"/>
+                            <field name="priority"/>
+                            <field name="from_date" />
+                            <field name="to_date"/>
+                            <field name="service_hub"/>
+                            <field name="task_reviewed" attrs="{'invisible': [('create_uid','=',False)]}"
+                                   groups="device_cycle.group_servicerequest_coordinator"/>
+                        </group>
+                    <!--End of Service Request creation fields -->
+
+                    <!-- Installation/Un-inst/Re-inst fields -->
+                        <group string="Details of installation/ re-installation/ un-installation"
+                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in', ['new installation', 'service and re-Installation', 'un-installation'])]}">
+                            <group>
+                                <field name="pondmothers_count"/>
+                                <field name="shrimptacks_count"/>
+                                <field name="pondguards_count"/>
+                                <field name="gateways_count"/>
+                                <field name="pharos_count"/>
+                            </group>
+                            <group>
+                                <field name="servicerequest_pondmother" widget="many2many_tags"
+                                    domain="[('device_type','=','pond mother')]"
+                                    options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                <field name="servicerequest_shrimp" widget="many2many_tags"
+                                    domain="[('device_type','=','shrimp talk')]"
+                                    options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                <field name="servicerequest_pondguard" widget="many2many_tags"
+                                    domain="[('device_type','=','pond guard')]"
+                                    options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                <field name="gateway_ids" widget="many2many_tags"/>
+                                <field name="shrimptalk_gateway"/>
+                            </group>
+
+                        </group>
+                    <!-- End of Installation/Un-inst/Re-inst fields -->
+
+                    <!-- Troubleshoot\repair fields -->
+                        <group colspan="2" string="Details of Troubleshoot and Repair"
+                        attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in','troubleshoot and Repair')]}">
+                            <field name="issue_category"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                            <field name="work_description"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                            <field name="field_activity"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                            <field name="replacedparts_ids" mode="tree,form"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                   ('issue_category', 'not in','device Failure')]}">
+                                    <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
+                                        <field name="name"/>
+                                        <field name="part_id"/>
+                                        <field name="image_id" widget="image"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="part_id"/>
+                                            <field name="image_id" widget="image"
+                                                   style="max-width:600px;max-height:200px;"/>
+                                        </group>
+                                    </form>
+                            </field>
+                            <field name="newparts_ids" mode="tree,form"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                   ('issue_category', 'not in','device Failure')]}">
+                                    <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
+                                        <field name="name"/>
+                                        <field name="part_id"/>
+                                        <field name="image_id" widget="image"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="name"/>
+                                            <field name="part_id"/>
+                                            <field name="image_id" widget="image"
+                                                   style="max-width:600px;max-height:200px;"/>
+                                        </group>
+                                    </form>
+                            </field>
+                            <field name="rootcause_analysis"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                            <field name="newparts_source"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                   ('issue_category', 'not in','device Failure')]}"/>
+                        </group>
+                    <!-- End ofTroubleshoot\repair fields -->
+
+                    <!-- Farm Activity fields -->
+                        <group colspan="2" string="Farm Activities"
+                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in', ['farm Activities'])]}">
+                            <field name="pond_observations" mode="tree,form"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('request_type', 'not in', ['farm Activities'])]}">
+                                    <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
+                                        <field name="pond_name"/>
+                                        <field name="pond_colour"/>
+                                        <field name="feed_left"/>
+                                    </tree>
+                                    <form>
+                                        <group>
+                                            <field name="pond_name" widget="many2many_tags"
+                                                   options="{'no_create_edit': True, 'no_create':True}"/>
+                                            <field name="pond_colour"/>
+                                            <field name="molting"/>
+                                            <field name="feed_gut"/>
+                                            <field name="antenna"/>
+                                            <field name="loose_shell"/>
+                                            <field name="stress"/>
+                                            <field name="gill"/>
+                                            <field name="feed_left"/>
+                                            <field name="tray_image" widget="image"
+                                                   style="max-width:600px;max-height:200px;"/>
+                                        </group>
+                                    </form>
+                            </field>
+                        </group>
+                    <!-- End of Farm Activity fields -->
+
+                    <!-- Common field input fields -->
+                        <group  colspan="2" string="Field inputs" attrs="{'invisible': [('create_uid','=',False)]}">
+                            <field name="comments"/>
+                            <field name="field_images" string="Field images"
+                                   style="max-width:600px;max-height:200px;">
+                                <form>
+                                    <group>
+                                        <field name="mul_image" widget="image"/>
+                                        <field name="servicerequest_id" invisible="1"/>
+                                    </group>
+                                </form>
+                                <tree>
+                                    <field name="mul_image" widget="image"/>
+                                    <field name="servicerequest_id" invisible="1"/>
+                                </tree>
+                            </field>
+                            <field name="acknowledgement"/>
+                            <field name="status"/>
+                            <field name="create_uid" string="Created By" invisible="1"/>
+                        </group>
+                    <!-- End of Common field input fields -->
+
+                    <!-- Service Request History field   -->
+                        <group colspan="2" attrs="{'invisible': [('create_uid','=',False)]}">
+                            <field name="servicerequest_history" options="{'no_create_edit': True,
+                                                            'no_create':True, 'no_quick_create':True}"
+                                            style="vertical-align:baseline;max-width:900px;">
+                                <form>
+                                    <div class="oe_title">
+                                        <h1>
+                                            <field name="request_id" readonly="1"/>
+                                        </h1>
+                                    </div>
+                                <!-- Service Request creation fields -->
+                                    <group colspan="2">
+                                        <field name="locations" invisible="1"/>
+                                        <field name="request_type"/>
+                                    <!-- Device Mobilization fields -->
+                                        <field name="source" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                                        <field name="source_location" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                                        <field name="destination" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                                        <field name="destination_location" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                                        <field name="vehicle_no" attrs="{'invisible': [('request_type', 'not in','device Mobilization')]}"/>
+                                    <!-- End of Device Mobilization fields -->
+                                        <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                               domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"
+                                               attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                                               'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"/>
+                                        <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                               attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                                               'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"
+                                               domain="[('id','in',locations)]"/>
+                                        <field name="pond_ids" widget="many2many_tags"
+                                               domain="['&amp;', ('partner_id', '=', partner_id),('location_id','=',location_id)]"
+                                               attrs="{'invisible':[('request_type', 'not in', ['troubleshoot and Repair'])]}"
+                                               options="{'no_create_edit': True, 'no_create':True}"/>
+                                        <field name="user_id" widget="many2many_tags"
+                                               options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                        <field name="description"/>
+                                        <field name="priority"/>
+                                        <field name="from_date"/>
+                                        <field name="to_date"/>
+                                        <field name="service_hub"/>
+                                        <field name="task_reviewed" attrs="{'invisible': [('create_uid','=',False)]}"
+                                               groups="device_cycle.group_servicerequest_coordinator"/>
+                                    </group>
+                                <!--End of Service Request creation fields -->
+
+                                <!-- Installation/Un-inst/Re-inst fields -->
+                                    <group string="Details of installation/ re-installation/ un-installation"
+                                           attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in', ['new installation', 'service and re-Installation', 'un-installation'])]}">
+                                        <group>
+                                            <field name="pondmothers_count"/>
+                                            <field name="shrimptacks_count"/>
+                                            <field name="pondguards_count"/>
+                                            <field name="gateways_count"/>
+                                            <field name="pharos_count"/>
+                                        </group>
+                                        <group>
+                                            <field name="servicerequesthistory_pondmother" widget="many2many_tags"
+                                                domain="[('device_type','=','pond mother')]"
+                                                options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                            <field name="servicerequesthistory_shrimp" widget="many2many_tags"
+                                                domain="[('device_type','=','shrimp talk')]"
+                                                options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                            <field name="servicerequesthistory_pondguard" widget="many2many_tags"
+                                                domain="[('device_type','=','pond guard')]"
+                                                options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                            <field name="gateway_ids" widget="many2many_tags"/>
+                                            <field name="shrimptalk_gateway"/>
+                                        </group>
+
+                                    </group>
+                                <!-- End of Installation/Un-inst/Re-inst fields -->
+
+                                <!-- Troubleshoot\repair fields -->
+                                    <group colspan="2" string="Details of Troubleshoot and Repair"
+                                    attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in','troubleshoot and Repair')]}">
+                                        <field name="issue_category"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                                        <field name="work_description"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                                        <field name="field_activity"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                                        <field name="replacedparts_history_ids" mode="tree,form"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                               ('issue_category', 'not in','device Failure')]}">
+                                                <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
+                                                    <field name="name"/>
+                                                    <field name="part_id"/>
+                                                    <field name="image_id" widget="image"/>
+                                                </tree>
+                                                <form>
+                                                    <group>
+                                                        <field name="name"/>
+                                                        <field name="part_id"/>
+                                                        <field name="image_id" widget="image"
+                                                               style="max-width:600px;max-height:200px;"/>
+                                                    </group>
+                                                </form>
+                                        </field>
+                                        <field name="newparts_history_ids" mode="tree,form"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                               ('issue_category', 'not in','device Failure')]}">
+                                                <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
+                                                    <field name="name"/>
+                                                    <field name="part_id"/>
+                                                    <field name="image_id" widget="image"/>
+                                                </tree>
+                                                <form>
+                                                    <group>
+                                                        <field name="name"/>
+                                                        <field name="part_id"/>
+                                                        <field name="image_id" widget="image"
+                                                               style="max-width:600px;max-height:200px;"/>
+                                                    </group>
+                                                </form>
+                                        </field>
+                                        <field name="rootcause_analysis"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                                        <field name="newparts_source"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                               ('issue_category', 'not in','device Failure')]}"/>
+                                    </group>
+                                <!-- End ofTroubleshoot\repair fields -->
+
+                                <!-- Farm Activity fields -->
+                                    <group colspan="2" string="Farm Activities"
+                                           attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in', ['farm Activities'])]}">
+                                        <field name="pond_history_observations" mode="tree,form"
+                                               attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                           ('request_type', 'not in', ['farm Activities'])]}">
+                                                <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
+                                                    <field name="pond_name"/>
+                                                    <field name="pond_colour"/>
+                                                    <field name="feed_left"/>
+                                                </tree>
+                                                <form>
+                                                    <group>
+                                                        <field name="pond_name" widget="many2many_tags"
+                                                               options="{'no_create_edit': True, 'no_create':True}"/>
+                                                        <field name="pond_colour"/>
+                                                        <field name="molting"/>
+                                                        <field name="feed_gut"/>
+                                                        <field name="antenna"/>
+                                                        <field name="loose_shell"/>
+                                                        <field name="stress"/>
+                                                        <field name="gill"/>
+                                                        <field name="feed_left"/>
+                                                        <field name="tray_image" widget="image"
+                                                               style="max-width:600px;max-height:200px;"/>
+                                                    </group>
+                                                </form>
+                                        </field>
+                                    </group>
+                                <!-- End of Farm Activity fields -->
+
+                                <!-- Common field input fields -->
+                                    <group  colspan="2" string="Field inputs" attrs="{'invisible': [('create_uid','=',False)]}">
+                                        <field name="comments"/>
+                                        <field name="field_images" string="Field images"
+                                               style="max-width:600px;max-height:200px;">
+                                            <form>
+                                                <group>
+                                                    <field name="mul_image" widget="image"/>
+                                                    <field name="servicerequest_id" invisible="1"/>
+                                                </group>
+                                            </form>
+                                            <tree>
+                                                <field name="mul_image" widget="image"/>
+                                                <field name="servicerequest_id" invisible="1"/>
+                                            </tree>
+                                        </field>
+                                        <field name="acknowledgement"/>
+                                        <field name="status"/>
+                                        <field name="create_uid" string="Created By" invisible="1"/>
+                                    </group>
+                                <!-- End of Common field input fields -->
+                                </form>
+                                <tree string="ServiceRequest History Tree view" limit="10" default_order="id desc">
+                                    <field name="request_id" invisible="1"/>
+                                    <field name="request_type" invisible="1"/>
+                                    <field name="user_id" widget="many2many_tags" optional="show"
+                                           options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                    <field name="from_date"  widget="date" optional="hide"/>
+                                    <field name="to_date"  widget="date" optional="hide"/>
+                                    <field name="comments" optional="show"/>
+                                    <field name="status" decoration-danger="status == 'open'"
+                                           decoration-warning="status == 'pending for parts'"
+                                           decoration-info="status == 'work in Progress'"
+                                           decoration-success="status == 'task completed'" widget="badge"
+                                           optional="hide"/>
+                                    <field name="acknowledgement" optional="hide"/>
+                                    <field name="create_date" optional="show" string="Last Updated On"
+                                           widget="datetime"/>
+                                    <field name="create_uid" optional="show" string="Last Updated By"/>
+                                    <field name="pondmothers_count" string="PM Count" optional="hide"
+                                           attrs="{'invisible': [('request_type', 'not in', ['new installation', 'service and re-Installation', 'un-installation'])]}"/>
+                                    <field name="shrimptacks_count" string="ST Count" optional="hide"
+                                           attrs="{'invisible': [('request_type', 'not in', ['new installation', 'service and re-Installation', 'un-installation'])]}"/>
+                                    <field name="pondguards_count" string="PG Count" optional="hide"
+                                           attrs="{'invisible': [('request_type', 'not in', ['new installation', 'service and re-Installation', 'un-installation'])]}"/>
+                                    <field name="gateways_count" string="Gateways Count" optional="hide"
+                                           attrs="{'invisible': [('request_type', 'not in', ['new installation', 'service and re-Installation', 'un-installation'])]}"/>
+                                    <field name="pharos_count" string="Pharos Count" optional="hide"
+                                           attrs="{'invisible': [('request_type', 'not in', ['new installation', 'service and re-Installation', 'un-installation'])]}"/>
+                                    <field name="issue_category" optional="hide"
+                                       attrs="{'invisible': [('request_type', 'not in','troubleshoot and Repair')]}"/>
+                                    <field name="field_activity" optional="hide"
+                                       attrs="{'invisible': [('request_type', 'not in','troubleshoot and Repair')]}"/>
+                                </tree>
+                            </field>
+                        </group>
+                    <!-- End of Service Request History field   -->
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Tree view -->
+        <record id="servicerequest_tree_view" model="ir.ui.view">
+            <field name="name">servicerequest.tree</field>
+            <field name="model">servicerequest</field>
+            <field name="arch" type="xml">
+                <tree string="ServiceRequest Desc">
+                    <field name="request_id"/>
+                    <field name="request_type"/>
+                    <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                           attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                           'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"
+                                 domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"/>
+                    <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                 attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                               'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"/>
+                    <field name="user_id" widget="many2many_tags"
+                           options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                    <field name="description"/>
+                    <field name="service_hub"/>
+                    <field name="priority" decoration-primary="priority == 'low'"
+                           decoration-warning="priority == 'medium'"
+                           decoration-danger="priority == 'high'" widget="badge" optional="show"/>
+                    <field name="from_date" widget="date"/>
+                    <field name="to_date"  widget="date"/>
+                    <field name="status" decoration-danger="status == 'open'"
+                           decoration-warning="status == 'pending for parts'"
+                           decoration-info="status == 'work in Progress'"
+                           decoration-success="status == 'task completed'" widget="badge" optional="show"/>
+                    <field name="create_uid" string="Created By" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--Graph view -->
+        <record model="ir.ui.view" id="servicerequest_tasktype_graph">
+            <field name="name">servicerequest.tasktype.graph</field>
+            <field name="model">servicerequest</field>
+            <field name="arch" type="xml">
+                <graph string="Request Type Report" type="pie" sample="1">
+                    <field name="request_type"/>
+                </graph>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="servicerequest_status_graph">
+            <field name="name">servicerequest.status.graph</field>
+            <field name="model">servicerequest</field>
+            <field name="arch" type="xml">
+                <graph string="Customer Service Report" type="pie" sample="1">
+                    <field name="status"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- Search view -->
+        <record id="servicerequest_search_view" model="ir.ui.view">
+            <field name="name">servicerequest.search</field>
+            <field name="model">servicerequest</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="request_type"/>
+                </search>
+            </field>
+        </record>
+
+         <!-- Action -->
+        <record id="action_new_servicerequest" model="ir.actions.act_window">
+            <field name="name">Service Request</field>
+            <field name="res_model">servicerequest</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new Service Request</p>
+            </field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="menu_servicerequest" action="action_new_servicerequest" parent="pondlog_menu"
+                  groups="group_pondlogs_user" sequence="4"/>
+
+    </data>
+</odoo>

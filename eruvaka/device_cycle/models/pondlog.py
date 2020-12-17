@@ -453,4 +453,415 @@ class Customer(models.Model):
             custmr.pondmother_count = pondmothercount
             custmr.shrimptack_count = shrimptalkcount
             custmr.pondguard_count = pondguardcount
-            
+
+
+class ServiceRequestImages(models.Model):
+    _name = "servicerequest.image"
+    _description = "service request images"
+
+    mul_image = fields.Binary('Selected Images', max_width=30,
+                              max_height=30)
+    servicerequest_id = fields.Many2one('servicerequest')
+    servicerequest_history_id = fields.Many2one('servicerequest.history')
+
+
+class Gateway(models.Model):
+    _name = "gateway"
+    _description = "gateway details"
+
+    name = fields.Char('Gateway IDs')
+
+    @api.model
+    def create(self, vals):
+        gateways = self.sudo().env['gateway'].search([])
+        for gateway in gateways:
+            if gateway.name == vals['name']:
+                raise UserError(
+                    _('Gateway already exists'))
+        gateway_object = super(Gateway, self).create(vals)
+        return gateway_object
+
+    def write(self, vals):
+        gateways = self.sudo().env['gateway'].search([])
+        for gateway in gateways:
+            if gateway.name == vals['name']:
+                raise UserError(
+                    _('Gateway already exists'))
+        gateway_object = super(Gateway, self).write(vals)
+        return gateway_object
+
+class PartName(models.Model):
+    _name = "partname"
+    _description = "part name details"
+
+    name = fields.Char('Part name')
+
+class ReplacedParts(models.Model):
+    _name = "replacedparts"
+    _description = "replaced parts details"
+
+    name = fields.Many2one('partname', string="Part Name")
+    part_id = fields.Char('Part ID')
+    image_id = fields.Image(string="Image", max_width=100, max_height=100)
+
+    servicerequest_id = fields.Many2one('servicerequest', invisible=True)
+
+class NewParts(models.Model):
+    _name = "newparts"
+    _description = "new parts details"
+
+    name = fields.Many2one('partname', string="Part Name")
+    part_id = fields.Char('Part ID')
+    image_id = fields.Image(string="Image", max_width=100, max_height=100)
+
+    servicerequest_id = fields.Many2one('servicerequest', invisible=True)
+
+class FarmActivities(models.Model):
+    _name = "farm.activities"
+    _description = "farm activity details"
+
+    pond_name = fields.Many2many('pond', string='Pond Name')
+    pond_colour = fields.Char('Pond Colour')
+    molting = fields.Text('Molting Observations')
+    feed_gut = fields.Text('Feed Gut Observations')
+    antenna = fields.Text('Antenna Observations')
+    loose_shell = fields.Text('Loose Shell Observations')
+    stress = fields.Text('Stress Observations')
+    gill = fields.Text('Gill Observations')
+    feed_left = fields.Char('Feed Left in Check Tray')
+    tray_image = fields.Image('Check Tray Image', max_width=100, max_height=100)
+
+    servicerequest_id = fields.Many2one('servicerequest', invisible=True)
+
+class ReplacedPartsHistory(models.Model):
+    _name = "replacedparts.history"
+    _description = "replaced parts details"
+
+    name = fields.Many2one('partname', string="Part Name")
+    part_id = fields.Char('Part ID')
+    image_id = fields.Image(string="Image", max_width=100, max_height=100)
+
+    servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+
+
+class NewPartsHistory(models.Model):
+    _name = "newparts.history"
+    _description = "new parts details"
+
+    name = fields.Many2one('partname', string="Part Name")
+    part_id = fields.Char('Part ID')
+    image_id = fields.Image(string="Image", max_width=100, max_height=100)
+
+    servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+
+
+class FarmActivitiesHistory(models.Model):
+    _name = "farm.activities.history"
+    _description = "farm activity details"
+
+    pond_name = fields.Many2many('pond', string='Pond Name')
+    pond_colour = fields.Char('Pond Colour')
+    molting = fields.Text('Molting Observations')
+    feed_gut = fields.Text('Feed Gut Observations')
+    antenna = fields.Text('Antenna Observations')
+    loose_shell = fields.Text('Loose Shell Observations')
+    stress = fields.Text('Stress Observations')
+    gill = fields.Text('Gill Observations')
+    feed_left = fields.Char('Feed Left in Check Tray')
+    tray_image = fields.Image('Check Tray Image', max_width=100, max_height=100)
+
+    servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+
+class ServiceRequest(models.Model):
+    _name = "servicerequest"
+    _description = "service request details"
+
+    # service request creation fields
+    # request id generates automatically using sequence concept in odoo
+    request_id = fields.Char(string="Request ID", readonly=True, required=True, copy=False,
+                             default=lambda self: _('New'))
+
+    request_type = fields.Selection([('new installation', 'New Installation'),
+                                     ('service and re-Installation', 'Service & Re-Installation'),
+                                     ('un-installation', 'Un-Installation'),
+                                     ('troubleshoot and Repair', 'Troubleshoot & Repair'),
+                                     ('farm Activities', 'Farm Activities'),
+                                     ('warehouse Activities', 'Warehouse Activities'),
+                                     ('device Mobilization', 'Device Mobilization'),
+                                     ('others', 'Others'), ], copy=False, index=True,
+                                    track_visibility='onchange',
+                                    track_sequence=8, required=True)
+    partner_id = fields.Many2one('res.partner', string='Customer')
+    locations = fields.One2many('location', string='Locations', compute='_getlocationsbycustid')
+    location_id = fields.Many2one('location')
+    pond_ids = fields.Many2many('pond', string="Ponds")
+    user_id = fields.Many2many('res.users', string='Assigned to', required=True)
+    description = fields.Text('Description', required=True)
+    priority = fields.Selection([('high', 'High'),
+                                 ('medium', 'Medium'), ('low', 'Low'), ], copy=False, index=True,
+                                track_visibility='onchange', track_sequence=3)
+    service_hub = fields.Selection([('gudivada', 'Gudivada'),
+                                    ('tangutur', 'Tangutur'), ], copy=False, index=True,
+                                   track_visibility='onchange', track_sequence=2)
+    task_reviewed = fields.Selection([('yes', 'Yes'),
+                                      ('no', 'No'), ], copy=False, index=True,
+                                     string="Task Reviewed by Service Coordinator?",
+                                     track_visibility='onchange', track_sequence=2)
+    from_date = fields.Date('Requested On', default=fields.Datetime.now())
+    to_date = fields.Date('Closure By')
+
+    # field input fields
+    acknowledgement = fields.Boolean('Did you follow all the standard procedures?', default=False)
+    comments = fields.Text('Comments')
+    status = fields.Selection([('open', 'Open'),
+                               ('work in Progress', 'Work in Progress'),
+                               ('pending for parts', 'Pending for Parts'),
+                               ('task completed', 'Task Completed'), ], copy=False,
+                              index=True, track_visibility='onchange', track_sequence=4, default='open')
+    field_images = fields.One2many('servicerequest.image', 'servicerequest_id', auto_join=True,
+                                   string="Field Images")
+    # Details of installation/un-installation/re-installation
+    pondmothers_count = fields.Integer('Total PondMothers Installed')
+    shrimptacks_count = fields.Integer('Total ShrimpTalks Installed')
+    pondguards_count = fields.Integer('Total PondGuards Installed')
+    gateways_count = fields.Integer('Total Gateways Installed')
+    pharos_count = fields.Integer('Total Pharos Installed')
+    servicerequest_pondmother = fields.Many2many('device', 'servicerequest_pondmother_rel', 'servicerequest_id',
+                                                 'device_id', string="PondMother IDs")
+    servicerequest_shrimp = fields.Many2many('device', 'servicerequest_shrimp_rel', 'servicerequest_id',
+                                             'device_id',
+                                             string="ShrimpTalk IDs")
+    servicerequest_pondguard = fields.Many2many('device', 'servicerequest_pondguard_rel', 'servicerequest_id',
+                                                'device_id', string="PondGuard IDs")
+
+    gateway_ids = fields.Many2many('gateway', string="Gateway IDs")
+    shrimptalk_gateway = fields.Boolean('Shrimptalk is working as a gateway?', default=False)
+    # Device Mobilization
+    source = fields.Char('Source')
+    source_location = fields.Char('Source Location')
+    destination = fields.Char('Destination')
+    destination_location = fields.Char('Destination Location')
+    vehicle_no = fields.Char('Vehicle Number')
+
+    # Troubleshoot and Repair
+    issue_category = fields.Selection([('network Issues', 'Network Issues'),
+                                       ('network Stabilization', 'Network Stabilization'),
+                                       ('device Functionality Issue', 'Device Functionality Issue'),
+                                       ('device Failure', 'Device Failure'),
+                                       ('sT Response Issue', 'ST Response Issue'), ], copy=False, index=True,
+                                      track_visibility='onchange', track_sequence=5)
+    work_description = fields.Text('Work Description')
+    field_activity = fields.Text('On Field Activity')
+    rootcause_analysis = fields.Text('RootCause Analysis')
+    newparts_source = fields.Char('New Parts Source')
+    replacedparts_ids = fields.One2many('replacedparts', 'servicerequest_id', string="Replaced Parts", copy=True,
+                                        auto_join=True)
+    newparts_ids = fields.One2many('newparts', 'servicerequest_id', string="New Parts", copy=True,
+                                   auto_join=True)
+
+    # Farm activities
+    pond_observations = fields.One2many('farm.activities', 'servicerequest_id', string="Pond Observations",
+                                        copy=True,
+                                        auto_join=True)
+
+    servicerequest_history = fields.One2many('servicerequest.history', 'servicerequest_id',
+                                             string="Reassignment History", readonly="True")
+
+    @api.model
+    def create(self, vals):
+        if vals.get('request_id', _('New')) == _('New'):
+            vals['request_id'] = self.env['ir.sequence'].next_by_code('servicerequest.sequence') or _('New')
+        result = super(ServiceRequest, self).create(vals)
+        return result
+
+    def write(self, vals):
+        servicerequest_prev = {
+            'request_id': self.request_id,
+            'request_type': self.request_type,
+            'partner_id': self.partner_id.id,
+            'location_id': self.location_id.id,
+            'pond_ids': self.pond_ids,
+            'user_id': self.user_id,
+            'description': self.description,
+            'priority': self.priority,
+            'service_hub': self.service_hub,
+            'task_reviewed': self.task_reviewed,
+            'from_date': self.from_date,
+            'to_date': self.to_date,
+
+            'acknowledgement': self.acknowledgement,
+            'comments': self.comments,
+            'status': self.status,
+            'field_images': self.field_images,
+
+            'pondmothers_count': self.pondmothers_count,
+            'shrimptacks_count': self.shrimptacks_count,
+            'pondguards_count': self.pondguards_count,
+            'gateways_count': self.gateways_count,
+            'pharos_count': self.pharos_count,
+            'servicerequesthistory_pondmother': self.servicerequest_pondmother,
+            'servicerequesthistory_shrimp': self.servicerequest_shrimp,
+            'servicerequesthistory_pondguard': self.servicerequest_pondguard,
+            'gateway_ids': self.gateway_ids,
+            'shrimptalk_gateway': self.shrimptalk_gateway,
+
+            'source': self.source,
+            'source_location': self.source_location,
+            'destination': self.destination,
+            'destination_location': self.destination_location,
+            'vehicle_no': self.vehicle_no,
+
+            'issue_category': self.issue_category,
+            'work_description': self.work_description,
+            'field_activity': self.field_activity,
+            'rootcause_analysis': self.rootcause_analysis,
+            'newparts_history_ids': self.newparts_ids,
+            'replacedparts_history_ids': self.replacedparts_ids,
+            'newparts_source': self.newparts_source,
+            'pond_history_observations': self.pond_observations,
+
+            'servicerequest_id': self.id,
+        }
+
+        # Creating old record into service request history table
+        self.sudo().env['servicerequest.history'].create(servicerequest_prev)
+
+        servicerequest_object = super(ServiceRequest, self).write(vals)
+        return servicerequest_object
+
+    @api.onchange("partner_id")
+    def _clearLocationData(self):
+        self.location_id = None
+        self.pond_ids = None
+
+    @api.onchange("partner_id")
+    def _getlocationsbycustid(self):
+        if not self.partner_id.id:
+            self.locations = False
+        else:
+            ponds = self.sudo().env['pond'].search([('partner_id', '=', self.partner_id.id)])
+            if not any(ponds):
+                self.locations = False
+            else:
+                distinct_locations = []
+                for pond in ponds:
+                    if pond.location_id.id not in distinct_locations:
+                        distinct_locations.append(pond.location_id.id)
+                self.locations = distinct_locations
+
+
+class ServiceRequest_History(models.Model):
+    _name = "servicerequest.history"
+    _description = "service request history details"
+
+    # service request creation fields
+    # request id generates automatically using sequence concept in odoo
+    request_id = fields.Char('Request ID')
+
+    request_type = fields.Selection([('new installation', 'New Installation'),
+                                     ('service and re-Installation', 'Service & Re-Installation'),
+                                     ('un-installation', 'Un-Installation'),
+                                     ('troubleshoot and Repair', 'Troubleshoot & Repair'),
+                                     ('farm Activities', 'Farm Activities'),
+                                     ('warehouse Activities', 'Warehouse Activities'),
+                                     ('device Mobilization', 'Device Mobilization'),
+                                     ('others', 'Others'), ], copy=False, index=True,
+                                    track_visibility='onchange',
+                                    track_sequence=8)
+    partner_id = fields.Many2one('res.partner', string='Customer')
+    locations = fields.One2many('location', string='Locations', compute='_getlocationsbycustid')
+    location_id = fields.Many2one('location')
+    pond_ids = fields.Many2many('pond', string="Ponds")
+    user_id = fields.Many2many('res.users', string='Assigned to')
+    description = fields.Text('Description')
+    priority = fields.Selection([('high', 'High'),
+                                 ('medium', 'Medium'), ('low', 'Low'), ], copy=False, index=True,
+                                track_visibility='onchange', track_sequence=3)
+    service_hub = fields.Selection([('gudivada', 'Gudivada'),
+                                    ('tangutur', 'Tangutur'), ], copy=False, index=True,
+                                   track_visibility='onchange', track_sequence=2)
+    task_reviewed = fields.Selection([('yes', 'Yes'),
+                                      ('no', 'No'), ], copy=False, index=True,
+                                     string="Task Reviewed by Service Coordinator?",
+                                     track_visibility='onchange', track_sequence=2)
+    from_date = fields.Date('Requested On')
+    to_date = fields.Date('Closure By')
+
+    # field input fields
+    acknowledgement = fields.Boolean('Did you follow all the standard procedures?', default=False)
+    comments = fields.Text('Comments')
+
+    status = fields.Selection([('open', 'Open'),
+                               ('work in Progress', 'Work in Progress'),
+                               ('pending for parts', 'Pending for Parts'),
+                               ('task completed', 'Task Completed'), ], copy=False,
+                              index=True, track_visibility='onchange', track_sequence=4, default='open')
+    field_images = fields.One2many('servicerequest.image', 'servicerequest_history_id', auto_join=True,
+                                   string="Field Images")
+    # Details of installation/un-installation/re-installation
+    pondmothers_count = fields.Integer('Total PondMothers Installed')
+    shrimptacks_count = fields.Integer('Total ShrimpTalks Installed')
+    pondguards_count = fields.Integer('Total PondGuards Installed')
+    gateways_count = fields.Integer('Total Gateways Installed')
+    pharos_count = fields.Integer('Total Pharos Installed')
+    servicerequesthistory_pondmother = fields.Many2many('device', 'servicerequesthistory_pondmother_rel',
+                                                        'servicerequest_history_id',
+                                                        'device_id', string="PondMother IDs")
+    servicerequesthistory_shrimp = fields.Many2many('device', 'servicerequesthistory_shrimp_rel',
+                                                    'servicerequest_history_id',
+                                                    'device_id',
+                                                    string="ShrimpTalk IDs")
+    servicerequesthistory_pondguard = fields.Many2many('device', 'servicerequesthistory_pondguard_rel',
+                                                       'servicerequest_history_id',
+                                                       'device_id', string="PondGuard IDs")
+
+    gateway_ids = fields.Many2many('gateway', string="Gateway IDs")
+    shrimptalk_gateway = fields.Boolean('Shrimptalk is working as a gateway?', default=False)
+    # Device Mobilization
+    source = fields.Char('Source')
+    source_location = fields.Char('Source Location')
+    destination = fields.Char('Destination')
+    destination_location = fields.Char('Destination Location')
+    vehicle_no = fields.Char('Vehicle Number')
+
+    # Troubleshoot and Repair
+    issue_category = fields.Selection([('network Issues', 'Network Issues'),
+                                       ('network Stabilization', 'Network Stabilization'),
+                                       ('device Functionality Issue', 'Device Functionality Issue'),
+                                       ('device Failure', 'Device Failure'),
+                                       ('sT Response Issue', 'ST Response Issue'), ], copy=False, index=True,
+                                      track_visibility='onchange', track_sequence=5)
+    work_description = fields.Text('Work Description')
+    field_activity = fields.Text('On Field Activity')
+    rootcause_analysis = fields.Text('RootCause Analysis')
+    newparts_source = fields.Char('New Parts Source')
+    replacedparts_history_ids = fields.One2many('replacedparts.history', 'servicerequest_history_id', string="Failed Parts", copy=True,
+                                        auto_join=True)
+    newparts_history_ids = fields.One2many('newparts.history', 'servicerequest_history_id', string="Replaced Parts", copy=True,
+                                   auto_join=True)
+
+    # Farm activities
+    pond_history_observations = fields.One2many('farm.activities.history', 'servicerequest_history_id', string="Pond Observations",
+                                        copy=True,
+                                        auto_join=True)
+    servicerequest_id = fields.Many2one('servicerequest')
+
+    @api.onchange("partner_id")
+    def _clearLocationData(self):
+        self.location_id = None
+        self.pond_ids = None
+
+    @api.onchange("partner_id")
+    def _getlocationsbycustid(self):
+        if not self.partner_id.id:
+            self.locations = False
+        else:
+            ponds = self.sudo().env['pond'].search([('partner_id', '=', self.partner_id.id)])
+            if not any(ponds):
+                self.locations = False
+            else:
+                distinct_locations = []
+                for pond in ponds:
+                    if pond.location_id.id not in distinct_locations:
+                        distinct_locations.append(pond.location_id.id)
+                self.locations = distinct_locations

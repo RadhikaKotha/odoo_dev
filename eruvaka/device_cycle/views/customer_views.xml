@@ -130,13 +130,6 @@
                                     </tree>
                                 </field>
                             </page>
-<!--                            <page string="Issue Analysis">-->
-<!--                                 <field type="xml" name="pondlog_ids">-->
-<!--                                     <graph string="Issues By Status" type="pie" sample="1">-->
-<!--                                        <field name="issue_type"/>-->
-<!--                                    </graph>-->
-<!--                                 </field>-->
-<!--                            </page>-->
                         </notebook>
                     </sheet>
                 </form>
@@ -175,7 +168,7 @@
 
          <!-- Action -->
         <record id="action_new_customerdetails" model="ir.actions.act_window">
-            <field name="name">Customers</field>
+            <field name="name">Customer Management</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]</field>
@@ -192,7 +185,6 @@
 
       <!-- Menu -->
         <menuitem id="menu_customers" action="action_new_customerdetails" parent="pondlog_menu"
-                  groups="group_pondlogs_user" sequence="2"
-               />
+                  groups="group_pondlogs_user" sequence="2"/>
     </data>
 </odoo>

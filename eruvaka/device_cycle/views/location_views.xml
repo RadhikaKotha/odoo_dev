@@ -47,11 +47,11 @@
 
 
         <!-- top level menu: no parent -->
-        <menuitem id="main_pondlog_menu" name="ST Response Tracking"
+        <menuitem id="main_pondlog_menu" name="Customer Service Tracker"
                   groups="group_pondlogs_user"/>
         <!--A first level in the left side menu is needed
             before using action= attribute -->
-        <menuitem id="pondlog_menu" name="ST Response Tracking"
+        <menuitem id="pondlog_menu" name="Customer Service Tracker"
                   groups="group_pondlogs_user"
                   parent="main_pondlog_menu"/>
         <!--The following menu item should appear "after"

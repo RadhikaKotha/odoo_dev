@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Views -->
+        <record id="farmactivities_form_view" model="ir.ui.view">
+            <field name="name">farmactivities.form</field>
+            <field name="model">farm.activities</field>
+            <field name="arch" type="xml">
+                <form string="farmactivities Form">
+                    <sheet>
+                        <group>
+                            <field name="pond_name"/>
+                            <field name="pond_colour"/>
+                            <field name="molting"/>
+                            <field name="feed_gut"/>
+                            <field name="antenna"/>
+                            <field name="loose_shell"/>
+                            <field name="stress"/>
+                            <field name="gill"/>
+                            <field name="feed_left"/>
+                            <field name="tray_image"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="farmactivities_tree_view" model="ir.ui.view">
+            <field name="name">farmactivities.tree</field>
+            <field name="model">farm.activities</field>
+            <field name="arch" type="xml">
+                <tree string="Location Desc">
+                    <field name="pond_name"/>
+                    <field name="pond_colour"/>
+                    <field name="feed_left"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="farmactivities_search_view" model="ir.ui.view">
+            <field name="name">farmactivities.search</field>
+            <field name="model">farm.activities</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="pond_name"/>
+                </search>
+            </field>
+        </record>
+
+         <!-- Action -->
+        <record id="action_new_farmactivities" model="ir.actions.act_window">
+            <field name="name">farmactivities</field>
+            <field name="res_model">farm.activities</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">create a new field activity</p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

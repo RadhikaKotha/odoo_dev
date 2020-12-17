@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+    <record model="ir.module.category" id="module_servicetracker_category">
+        <field name="name">Customer Service Tracker</field>
+        <field name="description">Customer Service Tracker</field>
+        <field name="sequence">45</field>
+    </record>
     <record model="res.groups" id="group_pondlogs_user" >
         <field name="name">PondLogs / User</field>
+        <field name="category_id" ref="module_servicetracker_category"/>
     </record>
     <record model="ir.rule" id="dailyobservations_user_record_rule">
         <field name="name">DailyObservations Users</field>
@@ -16,12 +22,41 @@
     <record model="res.groups" id="group_pondlogs_manager" >
         <field name="name">PondLogs / Manager</field>
         <field name="implied_ids" eval="[(4, ref('group_pondlogs_user'))]"/>
+        <field name="category_id" ref="module_servicetracker_category"/>
     </record>
     <record model="ir.rule" id="dailyobservations_manager_record_rule">
         <field name="name">DailyObservations Manager</field>
         <field name="model_id" ref="model_pondlog"/>
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="groups" eval="[(4, ref('group_pondlogs_manager'))]"/>
+        <field name="perm_unlink" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+    </record>
+    <record model="res.groups" id="group_servicerequest_user">
+        <field name="name">ServiceRequest / User</field>
+        <field name="category_id" ref="module_servicetracker_category"/>
+    </record>
+     <record model="ir.rule" id="servicerequest_user_rule">
+        <field name="name">Service Request User</field>
+        <field name="model_id" ref="model_servicerequest"/>
+         <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_servicerequest_user'))]"/>
+        <field name="perm_unlink" eval="0"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_create" eval="1"/>
+    </record>
+    <record model="res.groups" id="group_servicerequest_coordinator">
+        <field name="name">ServiceRequest / Coordinator</field>
+        <field name="category_id" ref="module_servicetracker_category"/>
+    </record>
+    <record model="ir.rule" id="servicerequest_coordinator_rule">
+        <field name="name">Service Request Coordinator</field>
+        <field name="model_id" ref="model_servicerequest"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_servicerequest_coordinator'))]"/>
         <field name="perm_unlink" eval="1"/>
         <field name="perm_write" eval="1"/>
         <field name="perm_read" eval="1"/>
