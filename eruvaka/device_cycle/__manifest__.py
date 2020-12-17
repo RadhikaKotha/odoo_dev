@@ -2,7 +2,7 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 {
-    'name': 'ST ResponseTracking',
+    'name': 'Device Cycle',
     'version': '1.0',
     'category': 'Base',
     'sequence': 60,
