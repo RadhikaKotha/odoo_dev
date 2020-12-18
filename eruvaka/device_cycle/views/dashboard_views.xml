@@ -33,24 +33,27 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="Dashboard">
-                <board style="1-1">
+                <board>
                     <column>
                         <action
                             string="Issue Status Report"
                             name="%(device_cycle.act_daily_observations)d"/>
+                        <action
+                            string="Issue Type Report"
+                            name="%(device_cycle.act_daily_observations_issuetype)d"/>
 <!--                        <action-->
 <!--                            string="Customer Service Report"-->
 <!--                            name="%(device_cycle.act_service_status)d"/>-->
 
                     </column>
-                    <column>
-                        <action
-                            string="Issue Type Report"
-                            name="%(device_cycle.act_daily_observations_issuetype)d"/>
+<!--                    <column>-->
 <!--                        <action-->
-<!--                            string="Task Type Report"-->
-<!--                            name="%(device_cycle.act_service_task)d"/>-->
-                    </column>
+<!--                            string="Issue Type Report"-->
+<!--                            name="%(device_cycle.act_daily_observations_issuetype)d"/>-->
+<!--&lt;!&ndash;                        <action&ndash;&gt;-->
+<!--&lt;!&ndash;                            string="Task Type Report"&ndash;&gt;-->
+<!--&lt;!&ndash;                            name="%(device_cycle.act_service_task)d"/>&ndash;&gt;-->
+<!--                    </column>-->
                 </board>
             </form>
         </field>

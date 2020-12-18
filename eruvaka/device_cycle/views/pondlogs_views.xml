@@ -146,21 +146,21 @@
             </field>
         </record>
 
-         <record model="ir.ui.view" id="customer_issue_status_graph">
-            <field name="name">customer.issues.graph</field>
-            <field name="model">pondlog</field>
-            <field name="arch" type="xml">
-                <graph string="Issues By Status" type="pie" sample="1">
-                    <field name="ticket_status"/>
-                </graph>
-            </field>
-        </record>
         <record model="ir.ui.view" id="customer_issue_type_graph">
             <field name="name">customer.issuetype.graph</field>
             <field name="model">pondlog</field>
             <field name="arch" type="xml">
                 <graph string="Issues By IssueType" type="pie" sample="1">
                     <field name="issue_type"/>
+                </graph>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="customer_issue_status_graph">
+            <field name="name">customer.issues.graph</field>
+            <field name="model">pondlog</field>
+            <field name="arch" type="xml">
+                <graph string="Issues By Status" type="pie" sample="1">
+                    <field name="ticket_status"/>
                 </graph>
             </field>
         </record>
@@ -181,7 +181,7 @@
         <record id="action_new_pondlog" model="ir.actions.act_window">
             <field name="name">ST Daily Observations</field>
             <field name="res_model">pondlog</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">tree,form,graph</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">create a new issue/observation</p>
             </field>
