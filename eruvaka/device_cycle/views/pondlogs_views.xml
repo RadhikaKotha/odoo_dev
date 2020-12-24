@@ -179,7 +179,7 @@
 
          <!-- Action -->
         <record id="action_new_pondlog" model="ir.actions.act_window">
-            <field name="name">ST Daily Observations</field>
+            <field name="name">ST Monitoring</field>
             <field name="res_model">pondlog</field>
             <field name="view_mode">tree,form,graph</field>
             <field name="help" type="html">

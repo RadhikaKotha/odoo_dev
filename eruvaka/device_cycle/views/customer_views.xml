@@ -130,6 +130,37 @@
                                     </tree>
                                 </field>
                             </page>
+
+                            <page string="Service Requests">
+                                <field name="servicerequest_ids"
+                                       options="{'no_create_edit': True}" readonly="1">
+                                    <tree limit="10" default_order="id desc">
+                                        <field name="request_id"/>
+                                        <field name="request_type"/>
+                                        <field name="partner_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                               attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                                               'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"
+                                                     domain="['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]"/>
+                                        <field name="location_id" options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"
+                                                     attrs="{'invisible':[('request_type', 'in', ['warehouse Activities', 'device Mobilization'])],
+                                                   'required': [('request_type', 'not in', ['warehouse Activities', 'device Mobilization'])]}"/>
+                                        <field name="user_id" widget="many2many_tags"
+                                               options="{'no_create_edit': True, 'no_create':True, 'no_open':True}"/>
+                                        <field name="description"/>
+                                        <field name="service_hub"/>
+                                        <field name="priority" decoration-primary="priority == 'low'"
+                                               decoration-warning="priority == 'medium'"
+                                               decoration-danger="priority == 'high'" widget="badge" optional="show"/>
+                                        <field name="from_date" widget="date"/>
+                                        <field name="to_date"  widget="date"/>
+                                        <field name="status" decoration-danger="status == 'open'"
+                                               decoration-warning="status == 'pending for parts'"
+                                               decoration-info="status == 'work in Progress'"
+                                               decoration-success="status == 'task completed'" widget="badge" optional="show"/>
+                                        <field name="create_uid" string="Created By" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </page>
                         </notebook>
                     </sheet>
                 </form>
@@ -168,7 +199,7 @@
 
          <!-- Action -->
         <record id="action_new_customerdetails" model="ir.actions.act_window">
-            <field name="name">Customer Management</field>
+            <field name="name">Customers</field>
             <field name="res_model">res.partner</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">['&amp;', ('partner_share', '=', True), ('is_company', '=', False)]</field>

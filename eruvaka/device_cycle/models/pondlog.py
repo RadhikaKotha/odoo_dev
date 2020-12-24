@@ -436,6 +436,9 @@ class Customer(models.Model):
     pond_ids = fields.One2many('pond', 'partner_id', string="Ponds", copy=True,
                                auto_join=True)
 
+    servicerequest_ids = fields.One2many('servicerequest', 'partner_id', string="Service Requests", copy=True,
+                                         auto_join=True)
+
     def _getPonds(self):
         for customer in self:
             no_of_ponds = 0
@@ -465,6 +468,16 @@ class ServiceRequestImages(models.Model):
     servicerequest_history_id = fields.Many2one('servicerequest.history')
 
 
+# class SpeedTestImages(models.Model):
+#     _name = "speedtest.image"
+#     _description = "Speed test images"
+#
+#     mul_image = fields.Binary('Selected Images', max_width=30,
+#                               max_height=30)
+#     servicerequest_id = fields.Many2one('servicerequest')
+#     servicerequest_history_id = fields.Many2one('servicerequest.history')
+
+
 class Gateway(models.Model):
     _name = "gateway"
     _description = "gateway details"
@@ -490,31 +503,58 @@ class Gateway(models.Model):
         gateway_object = super(Gateway, self).write(vals)
         return gateway_object
 
+
+class SubCategory_Network(models.Model):
+    _name = "sub.category.network"
+    _description = "network issue sub category details"
+
+    name = fields.Char('Sub Category')
+
+
+class SubCategory_Device(models.Model):
+    _name = "sub.category.device"
+    _description = "device failure sub category details"
+
+    name = fields.Char('Sub Category')
+
+
+class SubCategory_STResponse(models.Model):
+    _name = "sub.category.stresponse"
+    _description = "ST response issue sub category details"
+
+    name = fields.Char('Sub Category')
+
+
 class PartName(models.Model):
     _name = "partname"
     _description = "part name details"
 
     name = fields.Char('Part name')
 
+
 class ReplacedParts(models.Model):
     _name = "replacedparts"
     _description = "replaced parts details"
 
-    name = fields.Many2one('partname', string="Part Name")
+    name = fields.Many2many('partname', string="Part Name")
     part_id = fields.Char('Part ID')
     image_id = fields.Image(string="Image", max_width=100, max_height=100)
 
     servicerequest_id = fields.Many2one('servicerequest', invisible=True)
+    # servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+
 
 class NewParts(models.Model):
     _name = "newparts"
     _description = "new parts details"
 
-    name = fields.Many2one('partname', string="Part Name")
+    name = fields.Many2many('partname', string="Part Name")
     part_id = fields.Char('Part ID')
     image_id = fields.Image(string="Image", max_width=100, max_height=100)
 
     servicerequest_id = fields.Many2one('servicerequest', invisible=True)
+    # servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+
 
 class FarmActivities(models.Model):
     _name = "farm.activities"
@@ -532,32 +572,34 @@ class FarmActivities(models.Model):
     tray_image = fields.Image('Check Tray Image', max_width=100, max_height=100)
 
     servicerequest_id = fields.Many2one('servicerequest', invisible=True)
+    # servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+
 
 class ReplacedPartsHistory(models.Model):
     _name = "replacedparts.history"
-    _description = "replaced parts details"
+    _description = "replaced parts history details"
 
     name = fields.Many2one('partname', string="Part Name")
     part_id = fields.Char('Part ID')
     image_id = fields.Image(string="Image", max_width=100, max_height=100)
 
-    servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+    # servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
 
 
 class NewPartsHistory(models.Model):
     _name = "newparts.history"
-    _description = "new parts details"
+    _description = "new parts history details"
 
     name = fields.Many2one('partname', string="Part Name")
     part_id = fields.Char('Part ID')
     image_id = fields.Image(string="Image", max_width=100, max_height=100)
 
-    servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+    # servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
 
 
 class FarmActivitiesHistory(models.Model):
     _name = "farm.activities.history"
-    _description = "farm activity details"
+    _description = "farm activity history details"
 
     pond_name = fields.Many2many('pond', string='Pond Name')
     pond_colour = fields.Char('Pond Colour')
@@ -570,7 +612,8 @@ class FarmActivitiesHistory(models.Model):
     feed_left = fields.Char('Feed Left in Check Tray')
     tray_image = fields.Image('Check Tray Image', max_width=100, max_height=100)
 
-    servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+    # servicerequest_history_id = fields.Many2one('servicerequest.history', invisible=True)
+
 
 class ServiceRequest(models.Model):
     _name = "servicerequest"
@@ -636,6 +679,7 @@ class ServiceRequest(models.Model):
 
     gateway_ids = fields.Many2many('gateway', string="Gateway IDs")
     shrimptalk_gateway = fields.Boolean('Shrimptalk is working as a gateway?', default=False)
+    network_stabilization = fields.Boolean('Network Stabilization?', default=False)
     # Device Mobilization
     source = fields.Char('Source')
     source_location = fields.Char('Source Location')
@@ -645,24 +689,29 @@ class ServiceRequest(models.Model):
 
     # Troubleshoot and Repair
     issue_category = fields.Selection([('network Issues', 'Network Issues'),
-                                       ('network Stabilization', 'Network Stabilization'),
                                        ('device Functionality Issue', 'Device Functionality Issue'),
                                        ('device Failure', 'Device Failure'),
                                        ('sT Response Issue', 'ST Response Issue'), ], copy=False, index=True,
                                       track_visibility='onchange', track_sequence=5)
+    sub_category_network = fields.Many2one('sub.category.network', string="Sub Category")
+    sub_category_device = fields.Many2one('sub.category.device', string="Sub Category")
+    sub_category_stresponse = fields.Many2one('sub.category.stresponse', string="Sub Category")
+    speed_test_image = fields.Image(string="Speed Test Image", max_width=100, max_height=100)
     work_description = fields.Text('Work Description')
     field_activity = fields.Text('On Field Activity')
     rootcause_analysis = fields.Text('RootCause Analysis')
     newparts_source = fields.Char('New Parts Source')
-    replacedparts_ids = fields.One2many('replacedparts', 'servicerequest_id', string="Replaced Parts", copy=True,
+    replacedparts_ids = fields.One2many('replacedparts', 'servicerequest_id', string="Failed Parts", copy=True,
+                               auto_join=True)
+    newparts_ids = fields.One2many('newparts', 'servicerequest_id', string="Replaced Parts", copy=True,
                                         auto_join=True)
-    newparts_ids = fields.One2many('newparts', 'servicerequest_id', string="New Parts", copy=True,
-                                   auto_join=True)
+    # replacedparts_ids = fields.Many2many('replacedparts', string="Failed Parts")
+    # newparts_ids = fields.Many2many('newparts', string="Replaced Parts")
 
     # Farm activities
-    pond_observations = fields.One2many('farm.activities', 'servicerequest_id', string="Pond Observations",
-                                        copy=True,
-                                        auto_join=True)
+    pond_observations = fields.One2many('farm.activities', 'servicerequest_id', string="Pond Observations", copy=True,
+                                   auto_join=True)
+    # pond_observations = fields.Many2many('farm.activities', string="Pond Observations")
 
     servicerequest_history = fields.One2many('servicerequest.history', 'servicerequest_id',
                                              string="Reassignment History", readonly="True")
@@ -715,10 +764,10 @@ class ServiceRequest(models.Model):
             'work_description': self.work_description,
             'field_activity': self.field_activity,
             'rootcause_analysis': self.rootcause_analysis,
-            'newparts_history_ids': self.newparts_ids,
-            'replacedparts_history_ids': self.replacedparts_ids,
+            'newparts_ids': self.newparts_ids,
+            'replacedparts_ids': self.replacedparts_ids,
             'newparts_source': self.newparts_source,
-            'pond_history_observations': self.pond_observations,
+            'pond_observations': self.pond_observations,
 
             'servicerequest_id': self.id,
         }
@@ -826,7 +875,6 @@ class ServiceRequest_History(models.Model):
 
     # Troubleshoot and Repair
     issue_category = fields.Selection([('network Issues', 'Network Issues'),
-                                       ('network Stabilization', 'Network Stabilization'),
                                        ('device Functionality Issue', 'Device Functionality Issue'),
                                        ('device Failure', 'Device Failure'),
                                        ('sT Response Issue', 'ST Response Issue'), ], copy=False, index=True,
@@ -835,15 +883,11 @@ class ServiceRequest_History(models.Model):
     field_activity = fields.Text('On Field Activity')
     rootcause_analysis = fields.Text('RootCause Analysis')
     newparts_source = fields.Char('New Parts Source')
-    replacedparts_history_ids = fields.One2many('replacedparts.history', 'servicerequest_history_id', string="Failed Parts", copy=True,
-                                        auto_join=True)
-    newparts_history_ids = fields.One2many('newparts.history', 'servicerequest_history_id', string="Replaced Parts", copy=True,
-                                   auto_join=True)
+    replacedparts_ids = fields.Many2many('replacedparts', string="Failed Parts")
+    newparts_ids = fields.Many2many('newparts', string="Replaced Parts")
 
     # Farm activities
-    pond_history_observations = fields.One2many('farm.activities.history', 'servicerequest_history_id', string="Pond Observations",
-                                        copy=True,
-                                        auto_join=True)
+    pond_observations = fields.Many2many('farm.activities', string="Pond Observations")
     servicerequest_id = fields.Many2one('servicerequest')
 
     @api.onchange("partner_id")

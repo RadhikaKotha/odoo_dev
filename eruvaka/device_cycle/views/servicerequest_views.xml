@@ -57,6 +57,9 @@
                                 <field name="pondguards_count"/>
                                 <field name="gateways_count"/>
                                 <field name="pharos_count"/>
+                                <field name="network_stabilization"
+                                       attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                                    ('request_type', 'not in', ['new installation', 'service and re-Installation'])]}"/>
                             </group>
                             <group>
                                 <field name="servicerequest_pondmother" widget="many2many_tags"
@@ -71,7 +74,6 @@
                                 <field name="gateway_ids" widget="many2many_tags"/>
                                 <field name="shrimptalk_gateway"/>
                             </group>
-
                         </group>
                     <!-- End of Installation/Un-inst/Re-inst fields -->
 
@@ -82,6 +84,15 @@
                             <field name="issue_category"
                                    attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                ('request_type', 'not in','troubleshoot and Repair')]}"/>
+                            <field name="sub_category_network"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('issue_category', 'not in','network Issues')]}"/>
+                            <field name="sub_category_device"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('issue_category', 'not in','device Failure')]}"/>
+                            <field name="sub_category_stresponse"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('issue_category', 'not in','sT Response Issue')]}"/>
                             <field name="work_description"
                                    attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                ('request_type', 'not in','troubleshoot and Repair')]}"/>
@@ -92,13 +103,13 @@
                                    attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                    ('issue_category', 'not in','device Failure')]}">
                                     <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
-                                        <field name="name"/>
+                                        <field name="name" widget="many2many_tags"/>
                                         <field name="part_id"/>
                                         <field name="image_id" widget="image"/>
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="name"/>
+                                            <field name="name" widget="many2many_tags"/>
                                             <field name="part_id"/>
                                             <field name="image_id" widget="image"
                                                    style="max-width:600px;max-height:200px;"/>
@@ -109,13 +120,13 @@
                                    attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                    ('issue_category', 'not in','device Failure')]}">
                                     <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
-                                        <field name="name"/>
+                                        <field name="name" widget="many2many_tags"/>
                                         <field name="part_id"/>
                                         <field name="image_id" widget="image"/>
                                     </tree>
                                     <form>
                                         <group>
-                                            <field name="name"/>
+                                            <field name="name" widget="many2many_tags"/>
                                             <field name="part_id"/>
                                             <field name="image_id" widget="image"
                                                    style="max-width:600px;max-height:200px;"/>
@@ -128,6 +139,9 @@
                             <field name="newparts_source"
                                    attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                    ('issue_category', 'not in','device Failure')]}"/>
+                            <field name="speed_test_image" widget="image"
+                                   attrs="{'invisible': ['|', ('create_uid', '=',  False),
+                               ('issue_category', 'not in','network Issues')]}"/>
                         </group>
                     <!-- End ofTroubleshoot\repair fields -->
 
@@ -139,7 +153,7 @@
                                    attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                ('request_type', 'not in', ['farm Activities'])]}">
                                     <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
-                                        <field name="pond_name"/>
+                                        <field name="pond_name" widget="many2many_tags"/>
                                         <field name="pond_colour"/>
                                         <field name="feed_left"/>
                                     </tree>
@@ -272,24 +286,24 @@
                                         <field name="field_activity"
                                                attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                            ('request_type', 'not in','troubleshoot and Repair')]}"/>
-                                        <field name="replacedparts_history_ids" mode="tree,form"
+                                        <field name="replacedparts_ids" mode="tree,form"
                                                attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                                ('issue_category', 'not in','device Failure')]}">
                                                 <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
-                                                    <field name="name"/>
+<!--                                                    <field name="name" widget="many2many_tags"/>-->
                                                     <field name="part_id"/>
                                                     <field name="image_id" widget="image"/>
                                                 </tree>
                                                 <form>
                                                     <group>
-                                                        <field name="name"/>
+<!--                                                        <field name="name" widget="many2many_tags"/>-->
                                                         <field name="part_id"/>
                                                         <field name="image_id" widget="image"
                                                                style="max-width:600px;max-height:200px;"/>
                                                     </group>
                                                 </form>
                                         </field>
-                                        <field name="newparts_history_ids" mode="tree,form"
+                                        <field name="newparts_ids" mode="tree,form"
                                                attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                                ('issue_category', 'not in','device Failure')]}">
                                                 <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
@@ -319,7 +333,7 @@
                                     <group colspan="2" string="Farm Activities"
                                            attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                            ('request_type', 'not in', ['farm Activities'])]}">
-                                        <field name="pond_history_observations" mode="tree,form"
+                                        <field name="pond_observations" mode="tree,form"
                                                attrs="{'invisible': ['|', ('create_uid', '=',  False),
                                            ('request_type', 'not in', ['farm Activities'])]}">
                                                 <tree options="{'no_create_edit': True, 'no_create':True}" limit="5">
@@ -476,7 +490,7 @@
 
          <!-- Action -->
         <record id="action_new_servicerequest" model="ir.actions.act_window">
-            <field name="name">Service Request</field>
+            <field name="name">Service Management</field>
             <field name="res_model">servicerequest</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">

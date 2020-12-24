@@ -47,7 +47,7 @@
 
 
         <!-- top level menu: no parent -->
-        <menuitem id="main_pondlog_menu" name="Customer Service Tracker"
+        <menuitem id="main_pondlog_menu" name="Customer Service Dashboard"
                   groups="group_pondlogs_user"/>
         <!--A first level in the left side menu is needed
             before using action= attribute -->
