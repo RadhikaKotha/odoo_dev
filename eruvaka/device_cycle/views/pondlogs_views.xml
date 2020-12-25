@@ -150,7 +150,7 @@
             <field name="name">customer.issuetype.graph</field>
             <field name="model">pondlog</field>
             <field name="arch" type="xml">
-                <graph string="Issues By IssueType" type="pie" sample="1">
+                <graph string="Issues By IssueType" type="line" sample="1">
                     <field name="issue_type"/>
                 </graph>
             </field>

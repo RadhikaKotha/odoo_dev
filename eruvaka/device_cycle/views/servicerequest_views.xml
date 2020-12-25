@@ -490,7 +490,7 @@
 
          <!-- Action -->
         <record id="action_new_servicerequest" model="ir.actions.act_window">
-            <field name="name">Service Management</field>
+            <field name="name">Field Service</field>
             <field name="res_model">servicerequest</field>
             <field name="view_mode">tree,form</field>
             <field name="help" type="html">
